@@ -3,8 +3,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import {
   DEFAULT_SIDEBAR,
+  DEFAULT_SIDEBAR_MENU_EFFECT,
   DEFAULT_SIDEBAR_MODE,
   DEFAULT_SIDEBAR_STYLE,
+  type SidebarMenuEffect,
   type SidebarMode,
   type SidebarStyle,
   type SidebarVisibility,
@@ -17,6 +19,8 @@ type SidebarContextValue = {
   setStyle: (style: SidebarStyle) => void
   mode: SidebarMode
   setMode: (mode: SidebarMode) => void
+  menuEffect: SidebarMenuEffect
+  setMenuEffect: (effect: SidebarMenuEffect) => void
 }
 
 const SidebarContext = createContext<SidebarContextValue | null>(null)
@@ -24,12 +28,16 @@ const SidebarContext = createContext<SidebarContextValue | null>(null)
 const VISIBILITY_KEY = 'v0-sidebar'
 const STYLE_KEY = 'v0-sidebar-style'
 const MODE_KEY = 'v0-sidebar-mode'
+const MENU_EFFECT_KEY = 'v0-sidebar-menu-effect'
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [visibility, setVisibilityState] =
     useState<SidebarVisibility>(DEFAULT_SIDEBAR)
   const [style, setStyleState] = useState<SidebarStyle>(DEFAULT_SIDEBAR_STYLE)
   const [mode, setModeState] = useState<SidebarMode>(DEFAULT_SIDEBAR_MODE)
+  const [menuEffect, setMenuEffectState] = useState<SidebarMenuEffect>(
+    DEFAULT_SIDEBAR_MENU_EFFECT,
+  )
 
   useEffect(() => {
     const storedVisibility = window.localStorage.getItem(
@@ -50,6 +58,12 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     if (storedMode === 'full' || storedMode === 'compact') {
       setModeState(storedMode)
     }
+    const storedMenuEffect = window.localStorage.getItem(
+      MENU_EFFECT_KEY,
+    ) as SidebarMenuEffect | null
+    if (storedMenuEffect === 'fade' || storedMenuEffect === 'slide') {
+      setMenuEffectState(storedMenuEffect)
+    }
   }, [])
 
   const setVisibility = (next: SidebarVisibility) => {
@@ -67,9 +81,23 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(MODE_KEY, next)
   }
 
+  const setMenuEffect = (next: SidebarMenuEffect) => {
+    setMenuEffectState(next)
+    window.localStorage.setItem(MENU_EFFECT_KEY, next)
+  }
+
   return (
     <SidebarContext.Provider
-      value={{ visibility, setVisibility, style, setStyle, mode, setMode }}
+      value={{
+        visibility,
+        setVisibility,
+        style,
+        setStyle,
+        mode,
+        setMode,
+        menuEffect,
+        setMenuEffect,
+      }}
     >
       {children}
     </SidebarContext.Provider>

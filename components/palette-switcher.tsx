@@ -17,7 +17,7 @@ export function PaletteSwitcher({
 
   if (variant === 'dots') {
     return (
-      <div className={cn('flex items-center gap-1.5', className)}>
+      <div className={cn('flex flex-wrap items-center gap-1.5', className)}>
         {PALETTES.map((p) => (
           <button
             key={p.id}
@@ -38,7 +38,7 @@ export function PaletteSwitcher({
   return (
     <div
       className={cn(
-        'grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6',
+        'grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6',
         className,
       )}
     >

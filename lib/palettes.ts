@@ -5,6 +5,12 @@ export type PaletteId =
   | 'orange'
   | 'rose'
   | 'slate'
+  | 'amber'
+  | 'cyan'
+  | 'fuchsia'
+  | 'lime'
+  | 'red'
+  | 'indigo'
 
 export type Palette = {
   id: PaletteId
@@ -51,6 +57,42 @@ export const PALETTES: Palette[] = [
     name: 'Grafite',
     swatch: 'oklch(0.44 0.03 255)',
     preview: ['oklch(0.44 0.03 255)', 'oklch(0.58 0.03 255)', 'oklch(0.68 0.03 255)'],
+  },
+  {
+    id: 'amber',
+    name: 'Âmbar',
+    swatch: 'oklch(0.78 0.16 85)',
+    preview: ['oklch(0.78 0.16 85)', 'oklch(0.72 0.14 70)', 'oklch(0.68 0.15 95)'],
+  },
+  {
+    id: 'cyan',
+    name: 'Ciano',
+    swatch: 'oklch(0.65 0.14 200)',
+    preview: ['oklch(0.65 0.14 200)', 'oklch(0.7 0.12 185)', 'oklch(0.58 0.13 215)'],
+  },
+  {
+    id: 'fuchsia',
+    name: 'Fúcsia',
+    swatch: 'oklch(0.62 0.24 330)',
+    preview: ['oklch(0.62 0.24 330)', 'oklch(0.68 0.2 315)', 'oklch(0.56 0.22 345)'],
+  },
+  {
+    id: 'lime',
+    name: 'Lima',
+    swatch: 'oklch(0.72 0.18 130)',
+    preview: ['oklch(0.72 0.18 130)', 'oklch(0.76 0.16 115)', 'oklch(0.66 0.17 145)'],
+  },
+  {
+    id: 'red',
+    name: 'Vermelho',
+    swatch: 'oklch(0.58 0.22 27)',
+    preview: ['oklch(0.58 0.22 27)', 'oklch(0.64 0.2 15)', 'oklch(0.52 0.21 40)'],
+  },
+  {
+    id: 'indigo',
+    name: 'Índigo',
+    swatch: 'oklch(0.52 0.18 275)',
+    preview: ['oklch(0.52 0.18 275)', 'oklch(0.58 0.16 260)', 'oklch(0.48 0.17 290)'],
   },
 ]
 

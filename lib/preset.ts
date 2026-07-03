@@ -14,6 +14,9 @@ import {
   SIDEBAR_MODE_OPTIONS,
   SIDEBAR_OPTIONS,
   SIDEBAR_STYLE_OPTIONS,
+  SIDEBAR_MENU_EFFECT_OPTIONS,
+  DEFAULT_SIDEBAR_MENU_EFFECT,
+  type SidebarMenuEffect,
   type SidebarMode,
   type SidebarStyle,
   type SidebarVisibility,
@@ -24,7 +27,7 @@ import { DEFAULT_ZOOM, ZOOM_OPTIONS, type ZoomId } from '@/lib/zoom'
  * Versão do schema do preset. Incremente quando mudar a estrutura para
  * permitir migrações ao ler presets antigos salvos no banco de dados.
  */
-export const PRESET_VERSION = 1
+export const PRESET_VERSION = 2
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -43,6 +46,7 @@ export type AppPreset = {
   sidebar: SidebarVisibility
   sidebarStyle: SidebarStyle
   sidebarMode: SidebarMode
+  sidebarMenuEffect: SidebarMenuEffect
   iconSet: IconSetId
 }
 
@@ -57,6 +61,7 @@ export const DEFAULT_PRESET: AppPreset = {
   sidebar: DEFAULT_SIDEBAR,
   sidebarStyle: DEFAULT_SIDEBAR_STYLE,
   sidebarMode: DEFAULT_SIDEBAR_MODE,
+  sidebarMenuEffect: DEFAULT_SIDEBAR_MENU_EFFECT,
   iconSet: DEFAULT_ICON_SET,
 }
 
@@ -122,6 +127,12 @@ export function parsePreset(input: string | unknown): ParseResult {
     ? (obj.sidebarMode as SidebarMode)
     : DEFAULT_PRESET.sidebarMode
 
+  const sidebarMenuEffect = SIDEBAR_MENU_EFFECT_OPTIONS.some(
+    (s) => s.id === obj.sidebarMenuEffect,
+  )
+    ? (obj.sidebarMenuEffect as SidebarMenuEffect)
+    : DEFAULT_PRESET.sidebarMenuEffect
+
   const iconSet = ICON_SET_OPTIONS.some((i) => i.id === obj.iconSet)
     ? (obj.iconSet as IconSetId)
     : DEFAULT_PRESET.iconSet
@@ -150,6 +161,7 @@ export function parsePreset(input: string | unknown): ParseResult {
       sidebar,
       sidebarStyle,
       sidebarMode,
+      sidebarMenuEffect,
       iconSet,
     },
   }

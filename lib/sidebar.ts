@@ -72,3 +72,29 @@ export const SIDEBAR_MODE_OPTIONS: SidebarModeOption[] = [
 ]
 
 export const DEFAULT_SIDEBAR_MODE: SidebarMode = 'full'
+
+/**
+ * Animação da pílula de rótulo no menu recolhido (compacto ou colapsado).
+ */
+export type SidebarMenuEffect = 'fade' | 'slide'
+
+export type SidebarMenuEffectOption = {
+  id: SidebarMenuEffect
+  label: string
+  description: string
+}
+
+export const SIDEBAR_MENU_EFFECT_OPTIONS: SidebarMenuEffectOption[] = [
+  {
+    id: 'slide',
+    label: 'Slide',
+    description: 'A pílula expande organicamente para a direita.',
+  },
+  {
+    id: 'fade',
+    label: 'Fade',
+    description: 'A pílula aparece com fade, sem deslocamento.',
+  },
+]
+
+export const DEFAULT_SIDEBAR_MENU_EFFECT: SidebarMenuEffect = 'slide'

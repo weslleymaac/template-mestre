@@ -264,6 +264,140 @@
   --chart-5: oklch(0.6 0.05 280);
 }
 
+[data-palette='amber'] {
+  --primary: oklch(0.78 0.16 85);
+  --primary-foreground: oklch(0.25 0.04 85);
+  --primary-soft: oklch(0.96 0.05 85);
+  --ring: oklch(0.78 0.16 85);
+  --sidebar-primary: oklch(0.78 0.16 85);
+  --sidebar-ring: oklch(0.78 0.16 85);
+  --chart-1: oklch(0.78 0.16 85);
+  --chart-2: oklch(0.72 0.14 70);
+  --chart-3: oklch(0.68 0.15 95);
+  --chart-4: oklch(0.82 0.13 100);
+  --chart-5: oklch(0.64 0.14 55);
+}
+.dark[data-palette='amber'] {
+  --primary-foreground: oklch(0.2 0.04 85);
+  --primary-soft: oklch(0.32 0.07 85);
+  --chart-1: oklch(0.82 0.16 85);
+  --chart-2: oklch(0.76 0.14 70);
+  --chart-3: oklch(0.72 0.15 95);
+  --chart-4: oklch(0.86 0.13 100);
+  --chart-5: oklch(0.7 0.14 55);
+}
+
+[data-palette='cyan'] {
+  --primary: oklch(0.65 0.14 200);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-soft: oklch(0.95 0.04 200);
+  --ring: oklch(0.65 0.14 200);
+  --sidebar-primary: oklch(0.65 0.14 200);
+  --sidebar-ring: oklch(0.65 0.14 200);
+  --chart-1: oklch(0.65 0.14 200);
+  --chart-2: oklch(0.7 0.12 185);
+  --chart-3: oklch(0.58 0.13 215);
+  --chart-4: oklch(0.74 0.11 170);
+  --chart-5: oklch(0.52 0.12 225);
+}
+.dark[data-palette='cyan'] {
+  --primary-soft: oklch(0.3 0.06 200);
+  --chart-1: oklch(0.72 0.14 200);
+  --chart-2: oklch(0.76 0.12 185);
+  --chart-3: oklch(0.66 0.13 215);
+  --chart-4: oklch(0.8 0.11 170);
+  --chart-5: oklch(0.6 0.12 225);
+}
+
+[data-palette='fuchsia'] {
+  --primary: oklch(0.62 0.24 330);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-soft: oklch(0.95 0.05 330);
+  --ring: oklch(0.62 0.24 330);
+  --sidebar-primary: oklch(0.62 0.24 330);
+  --sidebar-ring: oklch(0.62 0.24 330);
+  --chart-1: oklch(0.62 0.24 330);
+  --chart-2: oklch(0.68 0.2 315);
+  --chart-3: oklch(0.56 0.22 345);
+  --chart-4: oklch(0.72 0.18 300);
+  --chart-5: oklch(0.52 0.21 355);
+}
+.dark[data-palette='fuchsia'] {
+  --primary-soft: oklch(0.32 0.09 330);
+  --chart-1: oklch(0.68 0.24 330);
+  --chart-2: oklch(0.74 0.2 315);
+  --chart-3: oklch(0.64 0.22 345);
+  --chart-4: oklch(0.78 0.18 300);
+  --chart-5: oklch(0.58 0.21 355);
+}
+
+[data-palette='lime'] {
+  --primary: oklch(0.72 0.18 130);
+  --primary-foreground: oklch(0.22 0.05 130);
+  --primary-soft: oklch(0.96 0.05 130);
+  --ring: oklch(0.72 0.18 130);
+  --sidebar-primary: oklch(0.72 0.18 130);
+  --sidebar-ring: oklch(0.72 0.18 130);
+  --chart-1: oklch(0.72 0.18 130);
+  --chart-2: oklch(0.76 0.16 115);
+  --chart-3: oklch(0.66 0.17 145);
+  --chart-4: oklch(0.8 0.15 100);
+  --chart-5: oklch(0.62 0.16 155);
+}
+.dark[data-palette='lime'] {
+  --primary-foreground: oklch(0.18 0.05 130);
+  --primary-soft: oklch(0.32 0.08 130);
+  --chart-1: oklch(0.76 0.18 130);
+  --chart-2: oklch(0.8 0.16 115);
+  --chart-3: oklch(0.72 0.17 145);
+  --chart-4: oklch(0.84 0.15 100);
+  --chart-5: oklch(0.68 0.16 155);
+}
+
+[data-palette='red'] {
+  --primary: oklch(0.58 0.22 27);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-soft: oklch(0.95 0.04 27);
+  --ring: oklch(0.58 0.22 27);
+  --sidebar-primary: oklch(0.58 0.22 27);
+  --sidebar-ring: oklch(0.58 0.22 27);
+  --chart-1: oklch(0.58 0.22 27);
+  --chart-2: oklch(0.64 0.2 15);
+  --chart-3: oklch(0.52 0.21 40);
+  --chart-4: oklch(0.7 0.18 5);
+  --chart-5: oklch(0.48 0.19 35);
+}
+.dark[data-palette='red'] {
+  --primary-soft: oklch(0.32 0.09 27);
+  --chart-1: oklch(0.66 0.22 27);
+  --chart-2: oklch(0.7 0.2 15);
+  --chart-3: oklch(0.6 0.21 40);
+  --chart-4: oklch(0.76 0.18 5);
+  --chart-5: oklch(0.56 0.19 35);
+}
+
+[data-palette='indigo'] {
+  --primary: oklch(0.52 0.18 275);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-soft: oklch(0.95 0.04 275);
+  --ring: oklch(0.52 0.18 275);
+  --sidebar-primary: oklch(0.52 0.18 275);
+  --sidebar-ring: oklch(0.52 0.18 275);
+  --chart-1: oklch(0.52 0.18 275);
+  --chart-2: oklch(0.58 0.16 260);
+  --chart-3: oklch(0.48 0.17 290);
+  --chart-4: oklch(0.64 0.15 250);
+  --chart-5: oklch(0.44 0.16 300);
+}
+.dark[data-palette='indigo'] {
+  --primary-soft: oklch(0.3 0.07 275);
+  --chart-1: oklch(0.62 0.18 275);
+  --chart-2: oklch(0.66 0.16 260);
+  --chart-3: oklch(0.58 0.17 290);
+  --chart-4: oklch(0.7 0.15 250);
+  --chart-5: oklch(0.54 0.16 300);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

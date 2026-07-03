@@ -97,6 +97,7 @@ const columns: Column<Cliente>[] = [
 ]
 
 export function ComponentesView() {
+  const [clientes, setClientes] = useState(CLIENTES)
   const [currency, setCurrency] = useState('usd')
   const [techs, setTechs] = useState<string[]>(['react', 'next'])
   const [city, setCity] = useState('')
@@ -111,6 +112,22 @@ export function ComponentesView() {
     setMarks((prev) =>
       prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark],
     )
+
+  const handleAddCliente = () => {
+    const nextId = clientes.reduce((max, c) => Math.max(max, c.id), 0) + 1
+    setClientes((prev) => [
+      ...prev,
+      {
+        id: nextId,
+        nome: 'Novo cliente',
+        email: 'novo@empresa.com',
+        empresa: 'Nova empresa',
+        valor: 0,
+        status: 'Pendente',
+        cadastro: new Date().toISOString().slice(0, 10),
+      },
+    ])
+  }
 
   const contextItems: ContextMenuItem[] = [
     {
@@ -148,9 +165,14 @@ export function ComponentesView() {
       {/* Tabela */}
       <DemoCard
         title="Tabela de dados"
-        description="Colunas ordenáveis, busca universal em todas as colunas e paginação."
+        description="Colunas ordenáveis e redimensionáveis, busca, paginação e adição de linhas."
       >
-        <DataTable columns={columns} data={CLIENTES} />
+        <DataTable
+          columns={columns}
+          data={clientes}
+          onAddRow={handleAddCliente}
+          resizableColumns
+        />
       </DemoCard>
 
       {/* Grid de componentes */}

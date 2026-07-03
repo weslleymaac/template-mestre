@@ -13,6 +13,8 @@ import { Icon } from '@/components/ui/icon'
 import { useToast } from '@/components/ui/toast'
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { NAV_ITEMS, NAV_SECTIONS } from '@/lib/nav'
+import type { IconName } from '@/lib/icon-set'
+import type { SidebarMenuEffect } from '@/lib/sidebar'
 import { cn } from '@/lib/utils'
 
 const FLOAT_INSET = 12
@@ -66,8 +68,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 ? // ~70% da altura, centralizado vertical, com respiro em cima
                   // e embaixo. Sem overflow-hidden: os itens expandem para fora.
                   'left-4 top-1/2 h-[70svh] -translate-y-1/2 rounded-2xl border border-sidebar-border shadow-lg'
-                : 'inset-y-3 left-3 overflow-hidden rounded-2xl border border-sidebar-border shadow-lg'
-              : 'inset-y-0 h-svh border-r border-sidebar-border',
+                : cn(
+                    'inset-y-3 left-3 rounded-2xl border border-sidebar-border shadow-lg',
+                    !collapsed && 'overflow-hidden',
+                  )
+              : cn(
+                  'inset-y-0 h-svh',
+                  collapsed && 'overflow-visible',
+                ),
           )}
         >
           <SidebarContent
@@ -104,7 +112,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 'fixed left-0 z-50 flex w-72 flex-col bg-sidebar',
                 floating
                   ? 'inset-y-3 left-3 overflow-hidden rounded-2xl border border-sidebar-border shadow-xl'
-                  : 'inset-y-0 border-r border-sidebar-border',
+                  : 'inset-y-0',
                 sidebarFixed && 'lg:hidden',
               )}
             >
@@ -131,7 +139,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         className="flex min-h-svh min-w-0 flex-col"
       >
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md sm:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 bg-background/80 px-4 backdrop-blur-md sm:px-6">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -183,14 +191,20 @@ function SidebarContent({
   onToggleCollapse?: () => void
   onClose?: () => void
 }) {
+  const { menuEffect } = useSidebar()
+
   if (compact) {
     return (
-      <CompactSidebarContent active={active} onNavigate={onNavigate} />
+      <CompactSidebarContent
+        active={active}
+        onNavigate={onNavigate}
+        menuEffect={menuEffect}
+      />
     )
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className={cn('flex h-full flex-col', collapsed && 'overflow-visible')}>
       {/* Traffic lights — só no estilo flutuante (igual ao mock) */}
       {floating && !collapsed && (
         <div className="flex items-center gap-1.5 px-4 pt-4" aria-hidden>
@@ -204,7 +218,6 @@ function SidebarContent({
       <div
         className={cn(
           'flex',
-          floating ? 'border-b-0' : 'border-b border-sidebar-border',
           collapsed
             ? 'flex-col items-center gap-2 py-3'
             : 'h-16 items-center gap-3 px-4',
@@ -250,8 +263,10 @@ function SidebarContent({
       {/* Navegação */}
       <nav
         className={cn(
-          'flex flex-1 flex-col gap-1 overflow-y-auto p-3',
-          collapsed && 'items-center',
+          'flex flex-1 flex-col gap-1 p-3',
+          collapsed
+            ? 'items-center overflow-visible'
+            : 'overflow-y-auto',
         )}
       >
         {NAV_SECTIONS.map((section, sectionIndex) => (
@@ -275,25 +290,35 @@ function SidebarContent({
               ))}
             {section.items.map((item) => {
               const isActive = active === item.href
+              if (collapsed) {
+                return (
+                  <CollapsedNavButton
+                    key={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    isActive={isActive}
+                    menuEffect={menuEffect}
+                    onClick={() => onNavigate(item.href)}
+                  />
+                )
+              }
               return (
                 <button
                   key={item.href}
                   type="button"
                   onClick={() => onNavigate(item.href)}
-                  title={collapsed ? item.label : undefined}
-                  aria-label={collapsed ? item.label : undefined}
                   className={cn(
-                    'flex items-center text-sm font-medium transition-colors',
-                    collapsed
-                      ? 'size-10 justify-center rounded-xl'
-                      : 'w-full gap-3 rounded-xl px-3 py-2.5',
+                    'group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-primary/10 text-primary'
                       : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground',
                   )}
                 >
-                  <Icon name={item.icon} className="size-5 shrink-0" />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
+                  <Icon
+                    name={item.icon}
+                    className="size-5 shrink-0 transition-transform duration-200 ease-out group-hover:-rotate-12"
+                  />
+                  <span className="truncate">{item.label}</span>
                 </button>
               )
             })}
@@ -316,9 +341,11 @@ function SidebarContent({
 function CompactSidebarContent({
   active,
   onNavigate,
+  menuEffect,
 }: {
   active: string
   onNavigate: (href: string) => void
+  menuEffect: SidebarMenuEffect
 }) {
   return (
     <div className="flex h-full flex-col">
@@ -342,27 +369,14 @@ function CompactSidebarContent({
             {section.items.map((item) => {
               const isActive = active === item.href
               return (
-                <button
+                <CollapsedNavButton
                   key={item.href}
-                  type="button"
+                  label={item.label}
+                  icon={item.icon}
+                  isActive={isActive}
+                  menuEffect={menuEffect}
                   onClick={() => onNavigate(item.href)}
-                  aria-label={item.label}
-                  className={cn(
-                    // pílula opaca elevada ao expandir: borda + sombra para
-                    // se destacar sobre o conteúdo claro atrás dela
-                    'group relative flex h-10 w-10 items-center overflow-hidden rounded-xl border border-transparent shadow-none transition-[width,background-color,border-color,box-shadow,color] duration-200 ease-out hover:z-50 hover:w-56 hover:border-sidebar-border hover:bg-sidebar hover:shadow-lg',
-                    isActive
-                      ? 'bg-primary-soft text-primary hover:bg-primary-soft'
-                      : 'text-sidebar-foreground/80 hover:text-sidebar-foreground',
-                  )}
-                >
-                  <span className="grid size-10 shrink-0 place-items-center">
-                    <Icon name={item.icon} className="size-5" />
-                  </span>
-                  <span className="whitespace-nowrap pr-3 text-sm font-medium opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                    {item.label}
-                  </span>
-                </button>
+                />
               )
             })}
           </div>
@@ -401,7 +415,7 @@ function ProfileFooter({
     <div
       className={cn(
         'relative p-3',
-        floating ? 'border-t-0' : 'border-t border-sidebar-border',
+        collapsed && 'overflow-visible',
       )}
       ref={ref}
     >
@@ -448,25 +462,65 @@ function ProfileFooter({
       </AnimatePresence>
 
       <div className={cn('flex items-center gap-1', collapsed && 'justify-center')}>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-haspopup="menu"
-          aria-expanded={open}
-          aria-label="Abrir menu de perfil"
-          className={cn(
-            'flex min-w-0 flex-1 items-center gap-3 rounded-xl p-2 transition-colors hover:bg-sidebar-accent',
-            collapsed && 'flex-none p-0',
-          )}
-        >
-          <Image
-            src="/avatar.png"
-            alt="Foto de perfil de Ana Martins"
-            width={36}
-            height={36}
-            className="size-9 shrink-0 rounded-full object-cover"
-          />
-          {!collapsed && (
+        {collapsed ? (
+          <div className="group/profile relative w-10 shrink-0">
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-haspopup="menu"
+              aria-expanded={open}
+              aria-label="Abrir menu de perfil"
+              className="flex size-10 items-center justify-center rounded-xl transition-colors hover:bg-sidebar-accent"
+            >
+              <Image
+                src="/avatar.png"
+                alt="Foto de perfil de Ana Martins"
+                width={40}
+                height={40}
+                className="size-10 shrink-0 rounded-full object-cover"
+              />
+            </button>
+            <div
+              aria-hidden
+              className={cn(
+                'pointer-events-none absolute top-1/2 left-full z-50 ml-2 flex h-10 -translate-y-1/2 items-center gap-2.5 rounded-xl border border-sidebar-border bg-sidebar py-0 pr-4 pl-1.5 whitespace-nowrap shadow-lg',
+                'scale-95 opacity-0 transition-all duration-150',
+                'group-hover/profile:scale-100 group-hover/profile:opacity-100',
+              )}
+            >
+              <Image
+                src="/avatar.png"
+                alt=""
+                width={32}
+                height={32}
+                className="size-8 shrink-0 rounded-full object-cover"
+              />
+              <span className="text-left leading-tight">
+                <span className="block text-sm font-medium text-sidebar-foreground">
+                  Ana Martins
+                </span>
+                <span className="block text-xs text-muted-foreground">
+                  Administradora
+                </span>
+              </span>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-label="Abrir menu de perfil"
+            className="flex min-w-0 flex-1 items-center gap-3 rounded-xl p-2 transition-colors hover:bg-sidebar-accent"
+          >
+            <Image
+              src="/avatar.png"
+              alt="Foto de perfil de Ana Martins"
+              width={36}
+              height={36}
+              className="size-9 shrink-0 rounded-full object-cover"
+            />
             <div className="min-w-0 text-left">
               <p className="truncate text-sm font-medium text-sidebar-foreground">
                 Ana Martins
@@ -475,8 +529,8 @@ function ProfileFooter({
                 Administradora
               </p>
             </div>
-          )}
-        </button>
+          </button>
+        )}
         {!collapsed && (
           <button
             type="button"
@@ -488,6 +542,82 @@ function ProfileFooter({
             <Icon name="logout" className="size-[18px]" />
           </button>
         )}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Item de navegação recolhido: ao passar o mouse, exibe uma pílula
+ * posicionada à direita (fora do trilho), sem sobrepor os demais ícones.
+ */
+function CollapsedNavButton({
+  label,
+  icon,
+  isActive,
+  menuEffect,
+  onClick,
+}: {
+  label: string
+  icon: IconName
+  isActive: boolean
+  menuEffect: SidebarMenuEffect
+  onClick: () => void
+}) {
+  const itemTone = cn(
+    isActive
+      ? 'bg-primary-soft text-primary'
+      : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground',
+  )
+
+  const iconEl = (
+    <Icon
+      name={icon}
+      className="size-5 transition-transform duration-200 ease-out group-hover/nav:-rotate-12"
+    />
+  )
+
+  if (menuEffect === 'slide') {
+    return (
+      <div className="group/nav relative w-10 shrink-0 hover:z-50">
+        <button
+          type="button"
+          onClick={onClick}
+          aria-label={label}
+          className={cn(
+            'relative flex h-10 w-10 items-center overflow-hidden rounded-xl border border-transparent shadow-none transition-[width,background-color,border-color,box-shadow,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/nav:w-56 group-hover/nav:border-sidebar-border group-hover/nav:bg-sidebar group-hover/nav:shadow-lg',
+            itemTone,
+          )}
+        >
+          <span className="grid size-10 shrink-0 place-items-center">{iconEl}</span>
+          <span className="whitespace-nowrap pr-4 text-sm font-medium">{label}</span>
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="group/nav relative w-10 shrink-0">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={label}
+        className={cn(
+          'flex size-10 items-center justify-center rounded-xl transition-colors duration-200',
+          itemTone,
+        )}
+      >
+        {iconEl}
+      </button>
+
+      <div
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute top-1/2 left-full z-50 ml-2 flex h-10 -translate-y-1/2 items-center gap-2.5 rounded-xl border border-sidebar-border bg-sidebar py-0 pr-4 pl-2.5 whitespace-nowrap opacity-0 shadow-lg transition-opacity duration-200 ease-out group-hover/nav:opacity-100',
+        )}
+      >
+        <Icon name={icon} className="size-4 shrink-0" />
+        <span className="text-sm font-medium text-sidebar-foreground">{label}</span>
       </div>
     </div>
   )

@@ -33,6 +33,7 @@ import {
 } from '@/lib/radius'
 import { getShadowPreset, SHADOW_PRESETS } from '@/lib/shadows'
 import {
+  SIDEBAR_MENU_EFFECT_OPTIONS,
   SIDEBAR_MODE_OPTIONS,
   SIDEBAR_OPTIONS,
   SIDEBAR_STYLE_OPTIONS,
@@ -163,6 +164,14 @@ export function PresetPanel({
 
                 {/* Densidade da barra flutuante — só quando o estilo é flutuante */}
                 <SidebarModeSection />
+
+                {/* Efeito da pílula no menu recolhido */}
+                <PresetSection
+                  title="Efeito do menu recolhido"
+                  description="Animação da pílula ao passar o mouse nos ícones (compacto ou colapsado)."
+                >
+                  <SidebarMenuEffectControl />
+                </PresetSection>
 
                 {/* Conjunto de ícones */}
                 <PresetSection
@@ -484,6 +493,51 @@ function SidebarModeControl() {
               >
                 <span className="size-1 rounded-full bg-primary/70" />
                 <span className="size-1 rounded-full bg-primary/70" />
+              </span>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-medium text-foreground">
+                {option.label}
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {option.description}
+              </span>
+            </span>
+            {isActive && <Check className="size-4 shrink-0 text-primary" />}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function SidebarMenuEffectControl() {
+  const { menuEffect, setMenuEffect } = useSidebar()
+  return (
+    <div className="grid grid-cols-1 gap-2">
+      {SIDEBAR_MENU_EFFECT_OPTIONS.map((option) => {
+        const isActive = menuEffect === option.id
+        const isSlide = option.id === 'slide'
+        return (
+          <button
+            key={option.id}
+            type="button"
+            onClick={() => setMenuEffect(option.id)}
+            className={`flex items-center gap-3 rounded-xl border bg-background px-3 py-2.5 text-left transition-colors ${
+              isActive ? 'border-primary' : 'border-border hover:bg-muted'
+            }`}
+          >
+            <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg border border-border bg-card">
+              <span className="relative flex h-5 w-7 items-center" aria-hidden>
+                <span className="absolute left-0 size-2 rounded-full bg-primary/70" />
+                <span
+                  className={`absolute top-1/2 h-2.5 -translate-y-1/2 rounded-full bg-primary/20 ${
+                    isSlide ? 'left-2.5 w-4' : 'left-2 w-3.5'
+                  }`}
+                />
+                {isSlide && (
+                  <span className="absolute left-3.5 size-1 rounded-full bg-primary/40" />
+                )}
               </span>
             </span>
             <span className="min-w-0 flex-1">
