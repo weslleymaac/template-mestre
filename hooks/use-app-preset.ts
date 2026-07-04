@@ -35,6 +35,10 @@ export function useAppPreset() {
     setMode: setSidebarMode,
     menuEffect: sidebarMenuEffect,
     setMenuEffect: setSidebarMenuEffect,
+    sidebarColor,
+    setSidebarColor,
+    backgroundTone,
+    setBackgroundTone,
   } = useSidebar()
   const { iconSet, setIconSet } = useIconSet()
 
@@ -50,6 +54,8 @@ export function useAppPreset() {
     sidebarStyle,
     sidebarMode,
     sidebarMenuEffect,
+    sidebarColor,
+    backgroundTone,
     iconSet,
   }
 
@@ -64,6 +70,8 @@ export function useAppPreset() {
     setSidebarStyle(next.sidebarStyle)
     setSidebarMode(next.sidebarMode)
     setSidebarMenuEffect(next.sidebarMenuEffect)
+    setSidebarColor(next.sidebarColor)
+    setBackgroundTone(next.backgroundTone)
     setIconSet(next.iconSet)
   }
 

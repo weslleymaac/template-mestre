@@ -8,14 +8,22 @@ import { DEFAULT_PALETTE, PALETTES, type PaletteId } from '@/lib/palettes'
 import { DEFAULT_RADIUS, RADIUS_MAX, RADIUS_MIN } from '@/lib/radius'
 import { DEFAULT_SHADOW, SHADOW_PRESETS, type ShadowId } from '@/lib/shadows'
 import {
+  DEFAULT_BACKGROUND_TONE,
+  DEFAULT_SIDEBAR_COLOR,
+  isBackgroundToneId,
+  isSidebarColorId,
+  type BackgroundToneId,
+  type SidebarColorId,
+} from '@/lib/shell-colors'
+import {
   DEFAULT_SIDEBAR,
+  DEFAULT_SIDEBAR_MENU_EFFECT,
   DEFAULT_SIDEBAR_MODE,
   DEFAULT_SIDEBAR_STYLE,
+  SIDEBAR_MENU_EFFECT_OPTIONS,
   SIDEBAR_MODE_OPTIONS,
   SIDEBAR_OPTIONS,
   SIDEBAR_STYLE_OPTIONS,
-  SIDEBAR_MENU_EFFECT_OPTIONS,
-  DEFAULT_SIDEBAR_MENU_EFFECT,
   type SidebarMenuEffect,
   type SidebarMode,
   type SidebarStyle,
@@ -27,7 +35,7 @@ import { DEFAULT_ZOOM, ZOOM_OPTIONS, type ZoomId } from '@/lib/zoom'
  * Versão do schema do preset. Incremente quando mudar a estrutura para
  * permitir migrações ao ler presets antigos salvos no banco de dados.
  */
-export const PRESET_VERSION = 2
+export const PRESET_VERSION = 3
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -47,6 +55,8 @@ export type AppPreset = {
   sidebarStyle: SidebarStyle
   sidebarMode: SidebarMode
   sidebarMenuEffect: SidebarMenuEffect
+  sidebarColor: SidebarColorId
+  backgroundTone: BackgroundToneId
   iconSet: IconSetId
 }
 
@@ -62,6 +72,8 @@ export const DEFAULT_PRESET: AppPreset = {
   sidebarStyle: DEFAULT_SIDEBAR_STYLE,
   sidebarMode: DEFAULT_SIDEBAR_MODE,
   sidebarMenuEffect: DEFAULT_SIDEBAR_MENU_EFFECT,
+  sidebarColor: DEFAULT_SIDEBAR_COLOR,
+  backgroundTone: DEFAULT_BACKGROUND_TONE,
   iconSet: DEFAULT_ICON_SET,
 }
 
@@ -133,6 +145,14 @@ export function parsePreset(input: string | unknown): ParseResult {
     ? (obj.sidebarMenuEffect as SidebarMenuEffect)
     : DEFAULT_PRESET.sidebarMenuEffect
 
+  const sidebarColor = isSidebarColorId(obj.sidebarColor)
+    ? obj.sidebarColor
+    : DEFAULT_PRESET.sidebarColor
+
+  const backgroundTone = isBackgroundToneId(obj.backgroundTone)
+    ? obj.backgroundTone
+    : DEFAULT_PRESET.backgroundTone
+
   const iconSet = ICON_SET_OPTIONS.some((i) => i.id === obj.iconSet)
     ? (obj.iconSet as IconSetId)
     : DEFAULT_PRESET.iconSet
@@ -162,6 +182,8 @@ export function parsePreset(input: string | unknown): ParseResult {
       sidebarStyle,
       sidebarMode,
       sidebarMenuEffect,
+      sidebarColor,
+      backgroundTone,
       iconSet,
     },
   }

@@ -1,6 +1,15 @@
 'use client'
 
+import { useTheme } from 'next-themes'
 import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  applyShellColors,
+  DEFAULT_BACKGROUND_TONE,
+  DEFAULT_SIDEBAR_COLOR,
+  isSidebarColorId,
+  type BackgroundToneId,
+  type SidebarColorId,
+} from '@/lib/shell-colors'
 import {
   DEFAULT_SIDEBAR,
   DEFAULT_SIDEBAR_MENU_EFFECT,
@@ -21,6 +30,10 @@ type SidebarContextValue = {
   setMode: (mode: SidebarMode) => void
   menuEffect: SidebarMenuEffect
   setMenuEffect: (effect: SidebarMenuEffect) => void
+  sidebarColor: SidebarColorId
+  setSidebarColor: (color: SidebarColorId) => void
+  backgroundTone: BackgroundToneId
+  setBackgroundTone: (tone: BackgroundToneId) => void
 }
 
 const SidebarContext = createContext<SidebarContextValue | null>(null)
@@ -29,14 +42,23 @@ const VISIBILITY_KEY = 'v0-sidebar'
 const STYLE_KEY = 'v0-sidebar-style'
 const MODE_KEY = 'v0-sidebar-mode'
 const MENU_EFFECT_KEY = 'v0-sidebar-menu-effect'
+const SIDEBAR_COLOR_KEY = 'v0-sidebar-color'
+const BACKGROUND_TONE_KEY = 'v0-background-tone'
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
+  const { resolvedTheme } = useTheme()
   const [visibility, setVisibilityState] =
     useState<SidebarVisibility>(DEFAULT_SIDEBAR)
   const [style, setStyleState] = useState<SidebarStyle>(DEFAULT_SIDEBAR_STYLE)
   const [mode, setModeState] = useState<SidebarMode>(DEFAULT_SIDEBAR_MODE)
   const [menuEffect, setMenuEffectState] = useState<SidebarMenuEffect>(
     DEFAULT_SIDEBAR_MENU_EFFECT,
+  )
+  const [sidebarColor, setSidebarColorState] = useState<SidebarColorId>(
+    DEFAULT_SIDEBAR_COLOR,
+  )
+  const [backgroundTone, setBackgroundToneState] = useState<BackgroundToneId>(
+    DEFAULT_BACKGROUND_TONE,
   )
 
   useEffect(() => {
@@ -64,7 +86,23 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     if (storedMenuEffect === 'fade' || storedMenuEffect === 'slide') {
       setMenuEffectState(storedMenuEffect)
     }
+    const storedSidebarColor = window.localStorage.getItem(
+      SIDEBAR_COLOR_KEY,
+    ) as SidebarColorId | null
+    if (storedSidebarColor && isSidebarColorId(storedSidebarColor)) {
+      setSidebarColorState(storedSidebarColor)
+    }
+    const storedBackgroundTone = window.localStorage.getItem(
+      BACKGROUND_TONE_KEY,
+    ) as BackgroundToneId | null
+    if (storedBackgroundTone === 'white' || storedBackgroundTone === 'neutral') {
+      setBackgroundToneState(storedBackgroundTone)
+    }
   }, [])
+
+  useEffect(() => {
+    applyShellColors(sidebarColor, backgroundTone, resolvedTheme === 'dark')
+  }, [sidebarColor, backgroundTone, resolvedTheme])
 
   const setVisibility = (next: SidebarVisibility) => {
     setVisibilityState(next)
@@ -86,6 +124,16 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(MENU_EFFECT_KEY, next)
   }
 
+  const setSidebarColor = (next: SidebarColorId) => {
+    setSidebarColorState(next)
+    window.localStorage.setItem(SIDEBAR_COLOR_KEY, next)
+  }
+
+  const setBackgroundTone = (next: BackgroundToneId) => {
+    setBackgroundToneState(next)
+    window.localStorage.setItem(BACKGROUND_TONE_KEY, next)
+  }
+
   return (
     <SidebarContext.Provider
       value={{
@@ -97,6 +145,10 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         setMode,
         menuEffect,
         setMenuEffect,
+        sidebarColor,
+        setSidebarColor,
+        backgroundTone,
+        setBackgroundTone,
       }}
     >
       {children}

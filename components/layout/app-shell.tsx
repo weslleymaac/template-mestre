@@ -15,6 +15,7 @@ import { useClickOutside } from '@/hooks/use-click-outside'
 import { NAV_ITEMS, NAV_SECTIONS } from '@/lib/nav'
 import type { IconName } from '@/lib/icon-set'
 import type { SidebarMenuEffect } from '@/lib/sidebar'
+import { isSolidSidebarColor } from '@/lib/shell-colors'
 import { cn } from '@/lib/utils'
 
 const FLOAT_INSET = 12
@@ -191,7 +192,8 @@ function SidebarContent({
   onToggleCollapse?: () => void
   onClose?: () => void
 }) {
-  const { menuEffect } = useSidebar()
+  const { menuEffect, sidebarColor } = useSidebar()
+  const solidSidebar = isSolidSidebarColor(sidebarColor)
 
   if (compact) {
     return (
@@ -236,7 +238,7 @@ function SidebarContent({
             type="button"
             onClick={onClose}
             aria-label="Fechar menu"
-            className="ml-auto grid size-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            className="ml-auto grid size-8 place-items-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
           >
             <Icon name="close" className="size-4" />
           </button>
@@ -247,7 +249,10 @@ function SidebarContent({
               onClick={onToggleCollapse}
               aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
               className={cn(
-                'grid size-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground',
+                'grid size-8 place-items-center rounded-lg transition-colors',
+                solidSidebar
+                  ? 'text-sidebar-foreground/75 hover:bg-white/10 hover:text-sidebar-foreground'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground',
                 collapsed ? 'size-9' : 'ml-auto',
               )}
             >
@@ -284,7 +289,7 @@ function SidebarContent({
                   <div className="my-1 h-px w-6 bg-sidebar-border" />
                 )
               ) : (
-                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/55">
                   {section.title}
                 </p>
               ))}
@@ -298,6 +303,7 @@ function SidebarContent({
                     icon={item.icon}
                     isActive={isActive}
                     menuEffect={menuEffect}
+                    solidSidebar={solidSidebar}
                     onClick={() => onNavigate(item.href)}
                   />
                 )
@@ -310,7 +316,9 @@ function SidebarContent({
                   className={cn(
                     'group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-primary/10 text-primary'
+                      ? solidSidebar
+                        ? 'bg-white/15 text-sidebar-foreground'
+                        : 'bg-primary/10 text-primary'
                       : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground',
                   )}
                 >
@@ -347,6 +355,9 @@ function CompactSidebarContent({
   onNavigate: (href: string) => void
   menuEffect: SidebarMenuEffect
 }) {
+  const { sidebarColor } = useSidebar()
+  const solidSidebar = isSolidSidebarColor(sidebarColor)
+
   return (
     <div className="flex h-full flex-col">
       {/* Marca — só o logo, centralizado */}
@@ -375,6 +386,7 @@ function CompactSidebarContent({
                   icon={item.icon}
                   isActive={isActive}
                   menuEffect={menuEffect}
+                  solidSidebar={solidSidebar}
                   onClick={() => onNavigate(item.href)}
                 />
               )
@@ -399,6 +411,8 @@ function ProfileFooter({
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
+  const { sidebarColor } = useSidebar()
+  const solidSidebar = isSolidSidebarColor(sidebarColor)
   useClickOutside(ref, () => setOpen(false), open)
 
   const menuItems = [
@@ -470,7 +484,12 @@ function ProfileFooter({
               aria-haspopup="menu"
               aria-expanded={open}
               aria-label="Abrir menu de perfil"
-              className="flex size-10 items-center justify-center rounded-xl transition-colors hover:bg-sidebar-accent"
+              className={cn(
+                'flex size-10 items-center justify-center rounded-xl transition-colors',
+                solidSidebar
+                  ? 'hover:bg-white/10'
+                  : 'hover:bg-sidebar-accent',
+              )}
             >
               <Image
                 src="/avatar.png"
@@ -483,8 +502,11 @@ function ProfileFooter({
             <div
               aria-hidden
               className={cn(
-                'pointer-events-none absolute top-1/2 left-full z-50 ml-2 flex h-10 -translate-y-1/2 items-center gap-2.5 rounded-xl border border-sidebar-border bg-sidebar py-0 pr-4 pl-1.5 whitespace-nowrap shadow-lg',
-                'scale-95 opacity-0 transition-all duration-150',
+                'pointer-events-none absolute top-1/2 left-full z-50 ml-3 flex h-10 -translate-y-1/2 items-center gap-2.5 rounded-xl py-0 pr-4 pl-1.5 whitespace-nowrap',
+                solidSidebar
+                  ? 'bg-sidebar text-sidebar-foreground shadow-xl ring-1 ring-white/10'
+                  : 'border border-sidebar-border bg-sidebar shadow-lg',
+                'scale-95 opacity-0 transition-all duration-200 ease-out',
                 'group-hover/profile:scale-100 group-hover/profile:opacity-100',
               )}
             >
@@ -499,7 +521,7 @@ function ProfileFooter({
                 <span className="block text-sm font-medium text-sidebar-foreground">
                   Ana Martins
                 </span>
-                <span className="block text-xs text-muted-foreground">
+                <span className="block text-xs text-sidebar-foreground/55">
                   Administradora
                 </span>
               </span>
@@ -525,7 +547,7 @@ function ProfileFooter({
               <p className="truncate text-sm font-medium text-sidebar-foreground">
                 Ana Martins
               </p>
-              <p className="truncate text-xs text-muted-foreground">
+              <p className="truncate text-xs text-sidebar-foreground/55">
                 Administradora
               </p>
             </div>
@@ -537,7 +559,7 @@ function ProfileFooter({
             onClick={() => handleAction('Sair')}
             aria-label="Sair"
             title="Sair"
-            className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            className="grid size-9 shrink-0 place-items-center rounded-xl text-sidebar-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Icon name="logout" className="size-[18px]" />
           </button>
@@ -551,29 +573,45 @@ function ProfileFooter({
  * Item de navegação recolhido: ao passar o mouse, exibe uma pílula
  * posicionada à direita (fora do trilho), sem sobrepor os demais ícones.
  */
+function collapsedHoverPill(solidSidebar: boolean) {
+  return solidSidebar
+    ? 'bg-sidebar text-sidebar-foreground shadow-xl ring-1 ring-white/10'
+    : 'border border-sidebar-border bg-sidebar shadow-lg'
+}
+
 function CollapsedNavButton({
   label,
   icon,
   isActive,
   menuEffect,
+  solidSidebar = false,
   onClick,
 }: {
   label: string
   icon: IconName
   isActive: boolean
   menuEffect: SidebarMenuEffect
+  solidSidebar?: boolean
   onClick: () => void
 }) {
-  const itemTone = cn(
-    isActive
-      ? 'bg-primary-soft text-primary'
-      : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground',
+  const iconTone = cn(
+    solidSidebar
+      ? cn(
+          isActive
+            ? 'bg-white/12 text-sidebar-foreground'
+            : 'text-sidebar-foreground/75 hover:bg-white/10 hover:text-sidebar-foreground',
+        )
+      : cn(
+          isActive
+            ? 'bg-primary-soft text-primary'
+            : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground',
+        ),
   )
 
   const iconEl = (
     <Icon
       name={icon}
-      className="size-5 transition-transform duration-200 ease-out group-hover/nav:-rotate-12"
+      className="size-5 shrink-0 transition-transform duration-200 ease-out group-hover/nav:-rotate-12"
     />
   )
 
@@ -585,8 +623,18 @@ function CollapsedNavButton({
           onClick={onClick}
           aria-label={label}
           className={cn(
-            'relative flex h-10 w-10 items-center overflow-hidden rounded-xl border border-transparent shadow-none transition-[width,background-color,border-color,box-shadow,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/nav:w-56 group-hover/nav:border-sidebar-border group-hover/nav:bg-sidebar group-hover/nav:shadow-lg',
-            itemTone,
+            'relative flex h-10 w-10 items-center overflow-hidden rounded-xl border border-transparent transition-[width,box-shadow,background-color,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+            solidSidebar
+              ? cn(
+                  isActive
+                    ? 'bg-white/12 text-sidebar-foreground'
+                    : 'text-sidebar-foreground/75',
+                  'group-hover/nav:w-52 group-hover/nav:bg-sidebar group-hover/nav:text-sidebar-foreground group-hover/nav:shadow-xl group-hover/nav:ring-1 group-hover/nav:ring-white/10',
+                )
+              : cn(
+                  iconTone,
+                  'group-hover/nav:w-56 group-hover/nav:border-sidebar-border group-hover/nav:bg-sidebar group-hover/nav:shadow-lg',
+                ),
           )}
         >
           <span className="grid size-10 shrink-0 place-items-center">{iconEl}</span>
@@ -597,14 +645,14 @@ function CollapsedNavButton({
   }
 
   return (
-    <div className="group/nav relative w-10 shrink-0">
+    <div className="group/nav relative w-10 shrink-0 hover:z-50">
       <button
         type="button"
         onClick={onClick}
         aria-label={label}
         className={cn(
           'flex size-10 items-center justify-center rounded-xl transition-colors duration-200',
-          itemTone,
+          iconTone,
         )}
       >
         {iconEl}
@@ -613,7 +661,8 @@ function CollapsedNavButton({
       <div
         aria-hidden
         className={cn(
-          'pointer-events-none absolute top-1/2 left-full z-50 ml-2 flex h-10 -translate-y-1/2 items-center gap-2.5 rounded-xl border border-sidebar-border bg-sidebar py-0 pr-4 pl-2.5 whitespace-nowrap opacity-0 shadow-lg transition-opacity duration-200 ease-out group-hover/nav:opacity-100',
+          'pointer-events-none absolute top-1/2 left-full z-50 ml-3 flex h-10 -translate-y-1/2 items-center gap-2.5 rounded-xl py-0 pr-4 pl-3 whitespace-nowrap opacity-0 transition-all duration-200 ease-out group-hover/nav:opacity-100',
+          collapsedHoverPill(solidSidebar),
         )}
       >
         <Icon name={icon} className="size-4 shrink-0" />

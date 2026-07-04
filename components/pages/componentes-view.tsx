@@ -5,16 +5,19 @@ import {
   AtSign,
   Bold,
   Copy,
+  DollarSign,
   Italic,
   Link2,
   Pencil,
   Redo2,
   ShoppingBag,
+  ShoppingCart,
   Trash2,
   Underline,
   Undo2,
   UserCheck,
   UserPlus,
+  Users,
 } from '@/components/ui/icons'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -44,6 +47,7 @@ import { MultiSelect } from '@/components/ui/multi-select'
 import { CircularProgress, Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
+import { StatCard } from '@/components/ui/stat-card'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Toolbar, ToolbarButton, ToolbarSeparator } from '@/components/ui/toolbar'
@@ -161,6 +165,29 @@ export function ComponentesView() {
         title="Biblioteca de Componentes"
         description="Componentes reutilizáveis e acessíveis, prontos para montar qualquer tela. Todos seguem a paleta e o tema ativos."
       />
+
+      {/* Cards odômetro */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard
+          label="Receita total"
+          value={318000}
+          prefix="R$ "
+          delta={12.5}
+          icon={<DollarSign className="size-5" />}
+        />
+        <StatCard
+          label="Novos clientes"
+          value={1284}
+          delta={8.2}
+          icon={<Users className="size-5" />}
+        />
+        <StatCard
+          label="Pedidos"
+          value={3942}
+          delta={-3.1}
+          icon={<ShoppingCart className="size-5" />}
+        />
+      </div>
 
       {/* Tabela */}
       <DemoCard

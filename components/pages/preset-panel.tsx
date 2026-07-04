@@ -7,6 +7,7 @@ import {
   PanelLeft,
   RotateCcw,
   Settings2,
+  Sun,
   X,
 } from '@/components/ui/icons'
 import { GridViewIcon } from 'hugeicons-react'
@@ -38,6 +39,12 @@ import {
   SIDEBAR_OPTIONS,
   SIDEBAR_STYLE_OPTIONS,
 } from '@/lib/sidebar'
+import {
+  BACKGROUND_TONE_OPTIONS,
+  DEFAULT_BACKGROUND_TONE,
+  DEFAULT_SIDEBAR_COLOR,
+  SIDEBAR_COLOR_OPTIONS,
+} from '@/lib/shell-colors'
 import { ZOOM_OPTIONS } from '@/lib/zoom'
 
 const ZOOM_COMBO_OPTIONS = ZOOM_OPTIONS.map((o) => ({
@@ -152,6 +159,22 @@ export function PresetPanel({
                   description="Defina se o menu fica fixo ou oculto atrás de um menu sanduíche."
                 >
                   <SidebarControl />
+                </PresetSection>
+
+                {/* Cor da barra lateral */}
+                <PresetSection
+                  title="Cor da barra lateral"
+                  description="Neutro, branco ou uma cor sólida da paleta."
+                >
+                  <SidebarColorControl />
+                </PresetSection>
+
+                {/* Fundo da aplicação */}
+                <PresetSection
+                  title="Fundo da aplicação"
+                  description="Branco ou neutro (#F9FAFB)."
+                >
+                  <BackgroundToneControl />
                 </PresetSection>
 
                 {/* Estilo da barra lateral */}
@@ -401,6 +424,103 @@ function SidebarControl() {
           </button>
         )
       })}
+    </div>
+  )
+}
+
+function SidebarColorControl() {
+  const { sidebarColor, setSidebarColor } = useSidebar()
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-1.5">
+        {SIDEBAR_COLOR_OPTIONS.map((option) => {
+          const isActive = sidebarColor === option.id
+          const isWhite = option.id === 'white'
+          return (
+            <button
+              key={option.id}
+              type="button"
+              aria-label={option.label}
+              aria-pressed={isActive}
+              onClick={() => setSidebarColor(option.id)}
+              style={
+                option.icon ? undefined : { backgroundColor: option.swatch }
+              }
+              className={`grid size-7 place-items-center rounded-full border transition-all hover:scale-110 ${
+                isWhite
+                  ? 'border-border bg-background text-foreground'
+                  : 'border-transparent'
+              } ${
+                isActive
+                  ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background'
+                  : ''
+              }`}
+            >
+              {option.icon === 'sun' && <Sun className="size-3.5" />}
+            </button>
+          )
+        })}
+      </div>
+      <Button
+        variant="outline"
+        onClick={() => setSidebarColor(DEFAULT_SIDEBAR_COLOR)}
+        className="w-full"
+      >
+        <RotateCcw />
+        Restaurar padrão
+      </Button>
+    </div>
+  )
+}
+
+function BackgroundToneControl() {
+  const { backgroundTone, setBackgroundTone } = useSidebar()
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-2">
+        {BACKGROUND_TONE_OPTIONS.map((option) => {
+          const isActive = backgroundTone === option.id
+          const isWhite = option.id === 'white'
+          return (
+            <button
+              key={option.id}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => setBackgroundTone(option.id)}
+              className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors ${
+                isActive
+                  ? 'border-primary bg-primary-soft text-primary'
+                  : 'border-border bg-background hover:bg-muted'
+              }`}
+            >
+              <span
+                className={`grid size-6 place-items-center rounded-full border ${
+                  isWhite
+                    ? 'border-border bg-background text-foreground'
+                    : 'border-transparent'
+                }`}
+                style={
+                  option.icon ? undefined : { backgroundColor: option.value }
+                }
+              >
+                {option.icon === 'sun' && <Sun className="size-3.5" />}
+              </span>
+              <span className="font-medium">{option.label}</span>
+              {isActive && <Check className="size-4 shrink-0" />}
+            </button>
+          )
+        })}
+      </div>
+      <Button
+        variant="outline"
+        onClick={() => setBackgroundTone(DEFAULT_BACKGROUND_TONE)}
+        className="w-full"
+      >
+        <RotateCcw />
+        Restaurar padrão
+      </Button>
     </div>
   )
 }

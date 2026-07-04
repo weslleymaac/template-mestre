@@ -3,7 +3,7 @@
 import { motion } from 'motion/react'
 import { ArrowDownRight, ArrowUpRight } from '@/components/ui/icons'
 import { Card } from '@/components/ui/card'
-import { AnimatedNumber } from '@/components/ui/animated-number'
+import { Odometer } from '@/components/ui/odometer'
 import { cn } from '@/lib/utils'
 
 export type StatCardProps = {
@@ -31,8 +31,8 @@ export function StatCard({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-muted-foreground">{label}</p>
-          <div className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
-            <AnimatedNumber
+          <div className="mt-2 text-2xl font-semibold tracking-tight tabular-nums">
+            <Odometer
               value={value}
               prefix={prefix}
               suffix={suffix}
