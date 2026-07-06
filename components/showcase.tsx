@@ -19,7 +19,7 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h2 className="font-heading text-2xl font-semibold tracking-tight text-balance">
+        <h2 className="font-display text-2xl font-semibold tracking-tight text-balance">
           {title}
         </h2>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground text-pretty">

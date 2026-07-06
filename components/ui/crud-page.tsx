@@ -166,7 +166,7 @@ export function CrudPage<T>({
       {/* Cabeçalho: nome + descrição + botão Novo */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-heading text-2xl font-semibold tracking-tight text-balance">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-balance">
             {title}
           </h2>
           {description && (
