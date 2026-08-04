@@ -3,16 +3,21 @@
 import { Settings2 } from '@/components/ui/icons'
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { ComponentesView } from '@/components/pages/componentes-view'
+import { CrudView } from '@/components/pages/crud-view'
+import { GraficosView } from '@/components/pages/graficos-view'
 import { PresetPanel } from '@/components/pages/preset-panel'
+import { PageHeader } from '@/components/showcase'
 import { PaletteSwitcher } from '@/components/palette-switcher'
 import { useSidebar } from '@/components/providers/sidebar-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
+import { PageTransition } from '@/components/ui/page-transition'
 import { useToast } from '@/components/ui/toast'
 import { useClickOutside } from '@/hooks/use-click-outside'
-import { NAV_ITEMS, NAV_SECTIONS } from '@/lib/nav'
+import { NAV_ITEMS, NAV_SECTIONS, type NavItem } from '@/lib/nav'
 import type { IconName } from '@/lib/icon-set'
 import type { SidebarMenuEffect } from '@/lib/sidebar'
 import { isSolidSidebarColor } from '@/lib/shell-colors'
@@ -28,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
   const [presetOpen, setPresetOpen] = useState(false)
-  // Item ativo: como é uma SPA de uma página, o Painel fica sempre ativo.
+  // Rota ativa da SPA (menu lateral).
   const [active, setActive] = useState(NAV_ITEMS[0]?.href ?? '/')
   const { visibility, style, mode } = useSidebar()
   // "visible" = barra fixa no desktop; "hidden" = sempre atrás do menu sanduíche.
@@ -167,10 +172,45 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-x-hidden">
+          <PageTransition pageKey={active}>
+            {resolveNavScreen(active, children)}
+          </PageTransition>
+        </main>
       </motion.div>
 
       <PresetPanel open={presetOpen} onClose={() => setPresetOpen(false)} />
+    </div>
+  )
+}
+
+function resolveNavScreen(href: string, children: ReactNode) {
+  switch (href) {
+    case '/':
+      return children
+    case '/componentes':
+      return <ComponentesView />
+    case '/usuarios':
+      return <CrudView />
+    case '/relatorios':
+      return <GraficosView />
+    default: {
+      const item = NAV_ITEMS.find((navItem) => navItem.href === href)
+      return <NavPlaceholderView item={item} />
+    }
+  }
+}
+
+function NavPlaceholderView({ item }: { item?: NavItem }) {
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+      <PageHeader
+        title={item?.label ?? 'Em breve'}
+        description={
+          item?.description ??
+          'Esta tela faz parte do template de navegação. Personalize conforme o seu produto.'
+        }
+      />
     </div>
   )
 }

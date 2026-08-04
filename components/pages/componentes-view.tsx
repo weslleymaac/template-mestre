@@ -49,7 +49,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
 import { StatCard } from '@/components/ui/stat-card'
 import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/tabs'
 import { Toolbar, ToolbarButton, ToolbarSeparator } from '@/components/ui/toolbar'
 import { useToast } from '@/components/ui/toast'
 import {
@@ -390,34 +390,36 @@ export function ComponentesView() {
               <TabsTrigger value="seguranca">Segurança</TabsTrigger>
               <TabsTrigger value="notificacoes">Notificações</TabsTrigger>
             </TabsList>
-            <TabsContent value="conta">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="tab-nome">Nome de exibição</Label>
-                <Input id="tab-nome" placeholder="Como devemos te chamar?" />
-                <p className="text-muted-foreground">
-                  Atualize as informações públicas do seu perfil.
-                </p>
-              </div>
-            </TabsContent>
-            <TabsContent value="seguranca">
-              <div className="flex flex-col gap-3">
-                <Label className="cursor-pointer">
-                  <Checkbox checked={terms} onCheckedChange={setTerms} />
-                  Ativar verificação em duas etapas
-                </Label>
-                <p className="text-muted-foreground">
-                  Reforce a proteção da sua conta com uma camada extra.
-                </p>
-              </div>
-            </TabsContent>
-            <TabsContent value="notificacoes">
-              <div className="flex items-center justify-between rounded-xl border border-border px-3.5 py-2.5">
-                <span className="text-sm font-medium">
-                  Resumo semanal por e-mail
-                </span>
-                <Switch checked={news} onCheckedChange={setNews} />
-              </div>
-            </TabsContent>
+            <TabsPanel>
+              <TabsContent value="conta">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="tab-nome">Nome de exibição</Label>
+                  <Input id="tab-nome" placeholder="Como devemos te chamar?" />
+                  <p className="text-muted-foreground">
+                    Atualize as informações públicas do seu perfil.
+                  </p>
+                </div>
+              </TabsContent>
+              <TabsContent value="seguranca">
+                <div className="flex flex-col gap-3">
+                  <Label className="cursor-pointer">
+                    <Checkbox checked={terms} onCheckedChange={setTerms} />
+                    Ativar verificação em duas etapas
+                  </Label>
+                  <p className="text-muted-foreground">
+                    Reforce a proteção da sua conta com uma camada extra.
+                  </p>
+                </div>
+              </TabsContent>
+              <TabsContent value="notificacoes">
+                <div className="flex items-center justify-between rounded-xl border border-border px-3.5 py-2.5">
+                  <span className="text-sm font-medium">
+                    Resumo semanal por e-mail
+                  </span>
+                  <Switch checked={news} onCheckedChange={setNews} />
+                </div>
+              </TabsContent>
+            </TabsPanel>
           </Tabs>
         </DemoCard>
 

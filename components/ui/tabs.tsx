@@ -1,14 +1,18 @@
 'use client'
 
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import {
+  Children,
   createContext,
+  isValidElement,
   useContext,
   useId,
   useState,
+  type ReactElement,
   type ReactNode,
 } from 'react'
 import { cn } from '@/lib/utils'
+import { screenMotion } from '@/lib/motion'
 
 type TabsContextValue = {
   value: string
@@ -17,6 +21,7 @@ type TabsContextValue = {
 }
 
 const TabsContext = createContext<TabsContextValue | null>(null)
+const TabsAnimatedContext = createContext(false)
 
 function useTabs() {
   const ctx = useContext(TabsContext)
@@ -112,6 +117,41 @@ export function TabsTrigger({
   )
 }
 
+export function TabsPanel({
+  className,
+  children,
+}: {
+  className?: string
+  children: ReactNode
+}) {
+  const { value: active } = useTabs()
+
+  const activePanel = Children.toArray(children).find((child) => {
+    if (!isValidElement<{ value?: string }>(child)) return false
+    return child.props.value === active
+  }) as ReactElement<{ value?: string; className?: string; children: ReactNode }> | undefined
+
+  return (
+    <TabsAnimatedContext.Provider value={true}>
+      <div className={className}>
+        <AnimatePresence mode="wait" initial={false}>
+          {activePanel && (
+            <motion.div
+              key={active}
+              initial={screenMotion.initial}
+              animate={screenMotion.animate}
+              exit={screenMotion.exit}
+              transition={screenMotion.transition}
+            >
+              {activePanel}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </TabsAnimatedContext.Provider>
+  )
+}
+
 export function TabsContent({
   value,
   className,
@@ -122,17 +162,31 @@ export function TabsContent({
   children: ReactNode
 }) {
   const { value: active } = useTabs()
+  const animated = useContext(TabsAnimatedContext)
+
+  if (animated) {
+    return (
+      <div role="tabpanel" className={cn('text-sm', className)}>
+        {children}
+      </div>
+    )
+  }
+
   if (active !== value) return null
 
   return (
-    <motion.div
-      role="tabpanel"
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.18, ease: 'easeOut' }}
-      className={cn('text-sm', className)}
-    >
-      {children}
-    </motion.div>
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={value}
+        role="tabpanel"
+        initial={screenMotion.initial}
+        animate={screenMotion.animate}
+        exit={screenMotion.exit}
+        transition={screenMotion.transition}
+        className={cn('text-sm', className)}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
   )
 }

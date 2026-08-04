@@ -6,7 +6,7 @@ import { CoresView } from '@/components/pages/cores-view'
 import { CrudView } from '@/components/pages/crud-view'
 import { GraficosView } from '@/components/pages/graficos-view'
 import { useSidebar } from '@/components/providers/sidebar-provider'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 
 const SECTIONS = [
@@ -48,18 +48,20 @@ export function ShowcaseSpa() {
       </div>
 
       <div className={cn('mx-auto px-4 py-6 sm:px-6 lg:px-8', containerWidth)}>
-        <TabsContent value="componentes">
-          <ComponentesView />
-        </TabsContent>
-        <TabsContent value="cores">
-          <CoresView />
-        </TabsContent>
-        <TabsContent value="graficos">
-          <GraficosView />
-        </TabsContent>
-        <TabsContent value="crud">
-          <CrudView />
-        </TabsContent>
+        <TabsPanel>
+          <TabsContent value="componentes">
+            <ComponentesView />
+          </TabsContent>
+          <TabsContent value="cores">
+            <CoresView />
+          </TabsContent>
+          <TabsContent value="graficos">
+            <GraficosView />
+          </TabsContent>
+          <TabsContent value="crud">
+            <CrudView />
+          </TabsContent>
+        </TabsPanel>
       </div>
     </Tabs>
   )
