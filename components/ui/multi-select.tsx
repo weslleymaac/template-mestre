@@ -1,7 +1,7 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
 import { Check, ChevronsUpDown, Search, X } from '@/components/ui/icons'
+import { FloatingPanel } from '@/components/ui/floating-panel'
 import { useMemo, useRef, useState } from 'react'
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { cn } from '@/lib/utils'
@@ -30,8 +30,9 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const ref = useRef<HTMLDivElement>(null)
-  useClickOutside(ref, () => setOpen(false), open)
+  const anchorRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  useClickOutside([anchorRef, panelRef], () => setOpen(false), open)
 
   const selectedOptions = options.filter((o) => value.includes(o.value))
 
@@ -51,7 +52,7 @@ export function MultiSelect({
   }
 
   return (
-    <div ref={ref} className={cn('relative', className)}>
+    <div ref={anchorRef} className={cn('relative', className)}>
       <button
         type="button"
         disabled={disabled}
@@ -93,69 +94,59 @@ export function MultiSelect({
         <ChevronsUpDown className="ml-auto size-4 shrink-0 text-muted-foreground" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.98 }}
-            transition={{ duration: 0.16, ease: 'easeOut' }}
-            className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-lg"
-          >
-            <div className="flex items-center gap-2 border-b border-border px-3">
-              <Search className="size-4 shrink-0 text-muted-foreground" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={searchPlaceholder}
-                className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              />
-            </div>
-            <div className="max-h-64 overflow-y-auto p-1.5">
-              {filtered.length === 0 ? (
-                <p className="px-3 py-6 text-center text-sm text-muted-foreground">
-                  {emptyText}
-                </p>
-              ) : (
-                filtered.map((option) => {
-                  const isActive = value.includes(option.value)
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => toggle(option.value)}
-                      className={cn(
-                        'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-muted',
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'grid size-5 shrink-0 place-items-center rounded-md border transition-colors',
-                          isActive
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-input',
-                        )}
-                      >
-                        {isActive && <Check className="size-3" strokeWidth={3} />}
+      <FloatingPanel open={open} anchorRef={anchorRef} panelRef={panelRef} maxHeight={320}>
+        <div className="flex items-center gap-2 border-b border-border px-3">
+          <Search className="size-4 shrink-0 text-muted-foreground" />
+          <input
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={searchPlaceholder}
+            className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
+          {filtered.length === 0 ? (
+            <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+              {emptyText}
+            </p>
+          ) : (
+            filtered.map((option) => {
+              const isActive = value.includes(option.value)
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => toggle(option.value)}
+                  className={cn(
+                    'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-muted',
+                  )}
+                >
+                  <span
+                    className={cn(
+                      'grid size-5 shrink-0 place-items-center rounded-md border transition-colors',
+                      isActive
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-input',
+                    )}
+                  >
+                    {isActive && <Check className="size-3" strokeWidth={3} />}
+                  </span>
+                  {option.leading}
+                  <span className="flex min-w-0 flex-col">
+                    <span className="truncate font-medium">{option.label}</span>
+                    {option.description && (
+                      <span className="truncate text-xs text-muted-foreground">
+                        {option.description}
                       </span>
-                      {option.leading}
-                      <span className="flex min-w-0 flex-col">
-                        <span className="truncate font-medium">{option.label}</span>
-                        {option.description && (
-                          <span className="truncate text-xs text-muted-foreground">
-                            {option.description}
-                          </span>
-                        )}
-                      </span>
-                    </button>
-                  )
-                })
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    )}
+                  </span>
+                </button>
+              )
+            })
+          )}
+        </div>
+      </FloatingPanel>
     </div>
   )
 }

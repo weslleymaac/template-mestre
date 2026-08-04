@@ -2,17 +2,21 @@
 
 import { X } from '@/components/ui/icons'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 type DialogProps = {
   open: boolean
   onClose: () => void
   title?: string
-  description?: string
-  children?: React.ReactNode
-  footer?: React.ReactNode
+  description?: ReactNode
+  children?: ReactNode
+  footer?: ReactNode
   className?: string
+  /** Ícone opcional para confirmações compactas (sem formulário). */
+  icon?: ReactNode
+  /** Destaque visual para ações destrutivas ou alertas. */
+  tone?: 'default' | 'destructive'
 }
 
 export function Dialog({
@@ -23,7 +27,11 @@ export function Dialog({
   children,
   footer,
   className,
+  icon,
+  tone = 'default',
 }: DialogProps) {
+  const hasBody = Boolean(children)
+  const isCompact = !hasBody && Boolean(description)
   // Fecha com Esc e trava o scroll do body enquanto aberto.
   useEffect(() => {
     if (!open) return
@@ -64,7 +72,7 @@ export function Dialog({
               className,
             )}
           >
-            {(title || description) && (
+            {(title || (hasBody && description)) && (
               <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
                 <div className="min-w-0">
                   {title && (
@@ -72,8 +80,8 @@ export function Dialog({
                       {title}
                     </h2>
                   )}
-                  {description && (
-                    <p className="mt-1 text-sm text-muted-foreground text-pretty">
+                  {hasBody && description && (
+                    <p className={cn('text-sm text-muted-foreground text-pretty', title && 'mt-1')}>
                       {description}
                     </p>
                   )}
@@ -89,7 +97,31 @@ export function Dialog({
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+            {isCompact && description && (
+              <div className="px-6 py-5">
+                <div className="flex items-start gap-4">
+                  {icon && (
+                    <div
+                      className={cn(
+                        'grid size-10 shrink-0 place-items-center rounded-full',
+                        tone === 'destructive'
+                          ? 'bg-destructive/10 text-destructive'
+                          : 'bg-muted text-muted-foreground',
+                      )}
+                    >
+                      {icon}
+                    </div>
+                  )}
+                  <p className="pt-0.5 text-sm leading-relaxed text-muted-foreground text-pretty">
+                    {description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {hasBody && (
+              <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+            )}
 
             {footer && (
               <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">

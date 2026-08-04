@@ -1,7 +1,7 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
 import { CalendarDays } from '@/components/ui/icons'
+import { FloatingPanel } from '@/components/ui/floating-panel'
 import { useEffect, useRef, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { useClickOutside } from '@/hooks/use-click-outside'
@@ -37,9 +37,10 @@ export function DateRangePicker({
     internal.range,
   )
 
-  const ref = useRef<HTMLDivElement>(null)
+  const anchorRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const [alignRight, setAlignRight] = useState(false)
-  useClickOutside(ref, () => setOpen(false), open)
+  useClickOutside([anchorRef, panelRef], () => setOpen(false), open)
 
   // ao abrir, sincroniza o rascunho e decide o alinhamento conforme o espaço
   useEffect(() => {
@@ -48,9 +49,7 @@ export function DateRangePicker({
       setDraftPreset(sel.preset)
       setDraftRange(sel.range)
 
-      // mede o espaço à direita do gatilho; se o popover (~560px) não couber,
-      // alinha pela direita para não estourar a tela
-      const rect = ref.current?.getBoundingClientRect()
+      const rect = anchorRef.current?.getBoundingClientRect()
       if (rect) {
         const popoverWidth = Math.min(window.innerWidth * 0.92, 560)
         setAlignRight(rect.left + popoverWidth > window.innerWidth - 8)
@@ -98,7 +97,7 @@ export function DateRangePicker({
   }
 
   return (
-    <div ref={ref} className={cn('relative', className)}>
+    <div ref={anchorRef} className={cn('relative', className)}>
       <button
         type="button"
         aria-expanded={open}
@@ -116,69 +115,64 @@ export function DateRangePicker({
         </span>
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.98 }}
-            transition={{ duration: 0.16, ease: 'easeOut' }}
-            className={cn(
-              'absolute z-50 mt-2 flex w-[min(92vw,560px)] flex-col overflow-hidden rounded-2xl border border-border bg-popover shadow-xl sm:flex-row',
-              alignRight ? 'right-0' : 'left-0',
-            )}
-          >
-            {/* Presets */}
-            <div className="flex max-h-72 shrink-0 flex-row gap-1 overflow-x-auto border-b border-border p-2 sm:max-h-none sm:w-44 sm:flex-col sm:overflow-y-auto sm:border-b-0 sm:border-r">
-              {DATE_PRESETS.map((preset) => {
-                const isActive = draftPreset === preset.id
-                return (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => selectPreset(preset.id)}
-                    className={cn(
-                      'shrink-0 rounded-lg px-3 py-2 text-left text-sm whitespace-nowrap transition-colors',
-                      isActive
-                        ? 'bg-primary-soft font-medium text-primary'
-                        : 'text-foreground hover:bg-muted',
-                    )}
-                  >
-                    {preset.label}
-                  </button>
-                )
-              })}
-            </div>
+      <FloatingPanel
+        open={open}
+        anchorRef={anchorRef}
+        panelRef={panelRef}
+        width={560}
+        align={alignRight ? 'end' : 'start'}
+        maxHeight={480}
+        className="rounded-2xl shadow-xl sm:flex-row"
+      >
+        {/* Presets */}
+        <div className="flex max-h-72 shrink-0 flex-row gap-1 overflow-x-auto border-b border-border p-2 sm:max-h-none sm:w-44 sm:flex-col sm:overflow-y-auto sm:border-b-0 sm:border-r">
+          {DATE_PRESETS.map((preset) => {
+            const isActive = draftPreset === preset.id
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => selectPreset(preset.id)}
+                className={cn(
+                  'shrink-0 rounded-lg px-3 py-2 text-left text-sm whitespace-nowrap transition-colors',
+                  isActive
+                    ? 'bg-primary-soft font-medium text-primary'
+                    : 'text-foreground hover:bg-muted',
+                )}
+              >
+                {preset.label}
+              </button>
+            )
+          })}
+        </div>
 
-            {/* Calendário */}
-            <div className="flex flex-1 flex-col p-3">
-              <Calendar
-                defaultMonth={draftRange.from ?? new Date()}
-                range={draftRange}
-                onSelectDate={selectDate}
-              />
-              <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-                <span className="text-xs text-muted-foreground">
-                  {draftRange.from
-                    ? formatRange({
-                        from: draftRange.from,
-                        to: draftRange.to ?? draftRange.from,
-                      })
-                    : 'Selecione as datas'}
-                </span>
-                <button
-                  type="button"
-                  onClick={apply}
-                  disabled={!draftRange.from}
-                  className="h-9 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-                >
-                  Aplicar
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Calendário */}
+        <div className="flex flex-1 flex-col p-3">
+          <Calendar
+            defaultMonth={draftRange.from ?? new Date()}
+            range={draftRange}
+            onSelectDate={selectDate}
+          />
+          <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+            <span className="text-xs text-muted-foreground">
+              {draftRange.from
+                ? formatRange({
+                    from: draftRange.from,
+                    to: draftRange.to ?? draftRange.from,
+                  })
+                : 'Selecione as datas'}
+            </span>
+            <button
+              type="button"
+              onClick={apply}
+              disabled={!draftRange.from}
+              className="h-9 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+            >
+              Aplicar
+            </button>
+          </div>
+        </div>
+      </FloatingPanel>
     </div>
   )
 }

@@ -3,15 +3,16 @@
 import { useEffect, type RefObject } from 'react'
 
 export function useClickOutside(
-  ref: RefObject<HTMLElement | null>,
+  ref: RefObject<HTMLElement | null> | RefObject<HTMLElement | null>[],
   handler: () => void,
   enabled = true,
 ) {
   useEffect(() => {
     if (!enabled) return
+    const refs = Array.isArray(ref) ? ref : [ref]
     function onPointer(event: MouseEvent | TouchEvent) {
-      const el = ref.current
-      if (!el || el.contains(event.target as Node)) return
+      const target = event.target as Node
+      if (refs.some((item) => item.current?.contains(target))) return
       handler()
     }
     function onKey(event: KeyboardEvent) {

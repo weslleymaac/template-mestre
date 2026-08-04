@@ -1,6 +1,6 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
+import { FloatingPanel } from '@/components/ui/floating-panel'
 import { useMemo, useRef, useState } from 'react'
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { cn } from '@/lib/utils'
@@ -25,8 +25,9 @@ export function Autocomplete({
   const [internal, setInternal] = useState('')
   const [open, setOpen] = useState(false)
   const [highlight, setHighlight] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
-  useClickOutside(ref, () => setOpen(false), open)
+  const anchorRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  useClickOutside([anchorRef, panelRef], () => setOpen(false), open)
 
   const current = value ?? internal
 
@@ -49,7 +50,7 @@ export function Autocomplete({
   }
 
   return (
-    <div ref={ref} className={cn('relative', className)}>
+    <div ref={anchorRef} className={cn('relative', className)}>
       <input
         value={current}
         placeholder={placeholder}
@@ -81,32 +82,28 @@ export function Autocomplete({
           'placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
         )}
       />
-      <AnimatePresence>
-        {open && filtered.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.14, ease: 'easeOut' }}
-            className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-border bg-popover p-1.5 shadow-lg"
+      <FloatingPanel
+        open={open && filtered.length > 0}
+        anchorRef={anchorRef}
+        panelRef={panelRef}
+        maxHeight={240}
+        className="p-1.5"
+      >
+        {filtered.map((s, i) => (
+          <button
+            key={s}
+            type="button"
+            onMouseEnter={() => setHighlight(i)}
+            onClick={() => pick(s)}
+            className={cn(
+              'flex w-full rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
+              i === highlight ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
+            )}
           >
-            {filtered.map((s, i) => (
-              <button
-                key={s}
-                type="button"
-                onMouseEnter={() => setHighlight(i)}
-                onClick={() => pick(s)}
-                className={cn(
-                  'flex w-full rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
-                  i === highlight ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-                )}
-              >
-                {s}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {s}
+          </button>
+        ))}
+      </FloatingPanel>
     </div>
   )
 }

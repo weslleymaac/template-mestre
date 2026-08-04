@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  AlertTriangle,
   LayoutGrid,
   Pencil,
   Plus,
@@ -263,17 +264,27 @@ export function CrudPage<T>({
         open={toDelete !== null}
         onClose={() => setToDelete(null)}
         title="Excluir registro"
+        tone="destructive"
+        icon={<AlertTriangle className="size-5" aria-hidden />}
         description={
-          toDelete && getDeleteLabel
-            ? `Tem certeza que deseja excluir "${getDeleteLabel(toDelete)}"? Esta ação não pode ser desfeita.`
-            : 'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.'
+          toDelete && getDeleteLabel ? (
+            <>
+              Tem certeza que deseja excluir{' '}
+              <span className="font-semibold text-foreground">
+                &ldquo;{getDeleteLabel(toDelete)}&rdquo;
+              </span>
+              ? Esta ação não pode ser desfeita.
+            </>
+          ) : (
+            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.'
+          )
         }
         footer={
           <>
-            <Button variant="ghost" onClick={() => setToDelete(null)}>
+            <Button variant="outline" onClick={() => setToDelete(null)}>
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
+            <Button variant="destructive-solid" onClick={confirmDelete}>
               Excluir
             </Button>
           </>
