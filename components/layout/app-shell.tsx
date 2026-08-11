@@ -172,7 +172,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-x-hidden">
+        {/* overflow-x-clip (não hidden): evita scrollport que quebra position:sticky das tabs */}
+        <main className="flex-1 overflow-x-clip">
           <PageTransition pageKey={active}>
             {resolveNavScreen(active, children)}
           </PageTransition>

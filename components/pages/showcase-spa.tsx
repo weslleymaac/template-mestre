@@ -27,7 +27,7 @@ export function ShowcaseSpa() {
       <div className="sticky top-16 z-20 border-b border-border bg-background/80 backdrop-blur-md">
         <div
           className={cn(
-            'mx-auto w-full min-w-0 px-4 py-3 sm:px-6 lg:px-8',
+            'mx-auto w-full min-w-0 px-4 py-2 sm:px-6 lg:px-8',
             containerWidth,
           )}
         >
