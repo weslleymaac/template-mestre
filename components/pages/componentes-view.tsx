@@ -160,7 +160,7 @@ export function ComponentesView() {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6">
       <PageHeader
         title="Biblioteca de Componentes"
         description="Componentes reutilizáveis e acessíveis, prontos para montar qualquer tela. Todos seguem a paleta e o tema ativos."

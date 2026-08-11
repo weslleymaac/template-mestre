@@ -7,10 +7,17 @@ type UseFloatingPositionOptions = {
   maxHeight?: number
   /** Largura do painel. Padrão: mesma largura do gatilho. */
   width?: number | 'anchor'
-  /** Alinha a borda direita do painel com a do gatilho. */
+  /**
+   * Alinhamento preferido. Com largura fixa, se estourar a tela o painel
+   * desliza o mínimo para caber — sem soltar do gatilho.
+   */
   align?: 'start' | 'end'
 }
 
+/**
+ * Posiciona um painel `fixed` no `document.body` colado ao gatilho.
+ * Usa getBoundingClientRect (coordenadas visuais).
+ */
 export function useFloatingPosition(
   anchorRef: RefObject<HTMLElement | null>,
   open: boolean,
@@ -35,43 +42,78 @@ export function useFloatingPosition(
 
       const rect = anchor.getBoundingClientRect()
       const padding = 8
+      const viewWidth = window.innerWidth
+      const viewHeight = window.innerHeight
+
       const panelWidth =
         width === 'anchor'
           ? rect.width
-          : Math.min(width, window.innerWidth - padding * 2)
+          : Math.min(width, viewWidth - padding * 2)
 
       let left =
         align === 'end' ? rect.right - panelWidth : rect.left
-      left = Math.max(
-        padding,
-        Math.min(left, window.innerWidth - panelWidth - padding),
-      )
 
-      const spaceBelow = window.innerHeight - rect.bottom - padding
+      if (width !== 'anchor') {
+        // Cola no gatilho; só desloca o necessário para não sair da tela.
+        const startLeft = rect.left
+        const endLeft = rect.right - panelWidth
+        if (align === 'start') {
+          left = startLeft
+          if (left + panelWidth > viewWidth - padding) {
+            left = Math.max(padding, endLeft)
+          }
+          if (left < padding) left = padding
+        } else {
+          left = endLeft
+          if (left < padding) {
+            left = Math.min(startLeft, viewWidth - panelWidth - padding)
+          }
+          if (left < padding) left = padding
+        }
+      }
+
+      const spaceBelow = viewHeight - rect.bottom - padding
       const spaceAbove = rect.top - padding
-      const openBelow = spaceBelow >= 120 || spaceBelow >= spaceAbove
+      // Prefere abrir abaixo; só sobe se realmente não couber.
+      const openBelow =
+        spaceBelow >= Math.min(200, maxHeight * 0.45) ||
+        spaceBelow >= spaceAbove
 
-      const availableHeight = openBelow ? spaceBelow - offset : spaceAbove - offset
+      const availableHeight = openBelow
+        ? spaceBelow - offset
+        : spaceAbove - offset
       const height = Math.min(maxHeight, Math.max(availableHeight, 96))
 
-      const top = openBelow
-        ? rect.bottom + offset
-        : rect.top - offset - height
-
-      setStyle({
+      // Ancora pela borda do input para ficar colado independente da altura real.
+      const next: CSSProperties = {
         position: 'fixed',
-        top,
         left,
         width: panelWidth,
         maxHeight: height,
         zIndex: 100,
-      })
+      }
+
+      if (openBelow) {
+        next.top = rect.bottom + offset
+        next.bottom = 'auto'
+      } else {
+        next.bottom = viewHeight - rect.top + offset
+        next.top = 'auto'
+      }
+
+      setStyle(next)
     }
 
     update()
+    const raf = requestAnimationFrame(() => {
+      update()
+      requestAnimationFrame(update)
+    })
+
     window.addEventListener('scroll', update, true)
     window.addEventListener('resize', update)
     return () => {
+      cancelAnimationFrame(raf)
       window.removeEventListener('scroll', update, true)
       window.removeEventListener('resize', update)
     }

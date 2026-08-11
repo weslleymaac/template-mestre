@@ -184,16 +184,36 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   )
 }
 
+function PageContainer({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+      {children}
+    </div>
+  )
+}
+
 function resolveNavScreen(href: string, children: ReactNode) {
   switch (href) {
     case '/':
       return children
     case '/componentes':
-      return <ComponentesView />
+      return (
+        <PageContainer>
+          <ComponentesView />
+        </PageContainer>
+      )
     case '/usuarios':
-      return <CrudView />
+      return (
+        <PageContainer>
+          <CrudView />
+        </PageContainer>
+      )
     case '/relatorios':
-      return <GraficosView />
+      return (
+        <PageContainer>
+          <GraficosView />
+        </PageContainer>
+      )
     default: {
       const item = NAV_ITEMS.find((navItem) => navItem.href === href)
       return <NavPlaceholderView item={item} />
@@ -203,7 +223,7 @@ function resolveNavScreen(href: string, children: ReactNode) {
 
 function NavPlaceholderView({ item }: { item?: NavItem }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       <PageHeader
         title={item?.label ?? 'Em breve'}
         description={
@@ -211,7 +231,7 @@ function NavPlaceholderView({ item }: { item?: NavItem }) {
           'Esta tela faz parte do template de navegação. Personalize conforme o seu produto.'
         }
       />
-    </div>
+    </PageContainer>
   )
 }
 

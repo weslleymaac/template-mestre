@@ -17,16 +17,16 @@ export function PageHeader({
   children?: React.ReactNode
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+      <div className="min-w-0 flex-1 sm:max-w-2xl">
         <h2 className="font-display text-2xl font-semibold tracking-tight text-balance">
           {title}
         </h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground text-pretty">
+        <p className="mt-1 text-sm text-muted-foreground text-pretty">
           {description}
         </p>
       </div>
-      {children}
+      {children ? <div className="shrink-0 sm:mt-0.5">{children}</div> : null}
     </div>
   )
 }

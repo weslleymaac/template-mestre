@@ -20,6 +20,8 @@ type DateRangePickerProps = {
   className?: string
 }
 
+const PANEL_WIDTH = 560
+
 export function DateRangePicker({
   value,
   onChange,
@@ -39,22 +41,14 @@ export function DateRangePicker({
 
   const anchorRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
-  const [alignRight, setAlignRight] = useState(false)
   useClickOutside([anchorRef, panelRef], () => setOpen(false), open)
 
-  // ao abrir, sincroniza o rascunho e decide o alinhamento conforme o espaço
+  // ao abrir, sincroniza o rascunho
   useEffect(() => {
-    if (open) {
-      const sel = value ?? internal
-      setDraftPreset(sel.preset)
-      setDraftRange(sel.range)
-
-      const rect = anchorRef.current?.getBoundingClientRect()
-      if (rect) {
-        const popoverWidth = Math.min(window.innerWidth * 0.92, 560)
-        setAlignRight(rect.left + popoverWidth > window.innerWidth - 8)
-      }
-    }
+    if (!open) return
+    const sel = value ?? internal
+    setDraftPreset(sel.preset)
+    setDraftRange(sel.range)
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = value ?? internal
@@ -103,14 +97,14 @@ export function DateRangePicker({
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'flex h-10 items-center gap-2 rounded-xl border border-input bg-background px-3.5 text-sm shadow-sm transition-all outline-none',
+          'flex h-10 w-full min-w-0 items-center gap-2 rounded-xl border border-input bg-background px-3.5 text-sm shadow-sm transition-all outline-none',
           'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
           open && 'border-ring ring-3 ring-ring/25',
         )}
       >
         <CalendarDays className="size-4 shrink-0 text-muted-foreground" />
-        <span className="font-medium">{currentLabel}</span>
-        <span className="hidden text-muted-foreground sm:inline">
+        <span className="truncate font-medium">{currentLabel}</span>
+        <span className="hidden truncate text-muted-foreground sm:inline">
           · {formatRange(selected.range)}
         </span>
       </button>
@@ -119,8 +113,8 @@ export function DateRangePicker({
         open={open}
         anchorRef={anchorRef}
         panelRef={panelRef}
-        width={560}
-        align={alignRight ? 'end' : 'start'}
+        width={PANEL_WIDTH}
+        align="start"
         maxHeight={480}
         className="rounded-2xl shadow-xl sm:flex-row"
       >
@@ -147,14 +141,14 @@ export function DateRangePicker({
         </div>
 
         {/* Calendário */}
-        <div className="flex flex-1 flex-col p-3">
+        <div className="flex min-w-0 flex-1 flex-col p-3">
           <Calendar
             defaultMonth={draftRange.from ?? new Date()}
             range={draftRange}
             onSelectDate={selectDate}
           />
-          <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-            <span className="text-xs text-muted-foreground">
+          <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
+            <span className="min-w-0 truncate text-xs text-muted-foreground">
               {draftRange.from
                 ? formatRange({
                     from: draftRange.from,
@@ -166,7 +160,7 @@ export function DateRangePicker({
               type="button"
               onClick={apply}
               disabled={!draftRange.from}
-              className="h-9 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+              className="h-9 shrink-0 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
             >
               Aplicar
             </button>

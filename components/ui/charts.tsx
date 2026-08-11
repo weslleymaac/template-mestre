@@ -27,8 +27,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import type { ReactNode } from 'react'
 
 /* ---------- Tokens / paleta de séries ---------- */
+
+function ChartFrame({ children }: { children: ReactNode }) {
+  return <div className="h-[280px] w-full min-w-0">{children}</div>
+}
 const SERIES = [
   'var(--color-chart-1)',
   'var(--color-chart-2)',
@@ -87,7 +92,8 @@ export function ColumnChart({
   showLabels?: boolean
 }) {
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 24, right: 8, left: -8, bottom: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--color-border)" strokeDasharray="4 4" />
         <XAxis dataKey={xKey} {...axisProps} />
@@ -116,7 +122,8 @@ export function ColumnChart({
           </Bar>
         ))}
       </BarChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -131,7 +138,8 @@ export function BarChartH({
   valueKey: string
 }) {
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <BarChart
         data={data}
         layout="vertical"
@@ -154,7 +162,8 @@ export function BarChartH({
           />
         </Bar>
       </BarChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -170,7 +179,8 @@ export function DonutChart({
 }) {
   const total = data.reduce((acc, d) => acc + d[valueKey], 0)
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Tooltip content={<ChartTooltip />} />
         <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
@@ -193,7 +203,8 @@ export function DonutChart({
           ))}
         </Pie>
       </PieChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -208,7 +219,8 @@ export function LineAreaChart({
   series: { key: string; name: string }[]
 }) {
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data} margin={{ top: 12, right: 12, left: -8, bottom: 0 }}>
         <defs>
           {series.map((s, i) => (
@@ -238,7 +250,8 @@ export function LineAreaChart({
           />
         ))}
       </AreaChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -255,7 +268,8 @@ export function SimpleLineChart({
   name: string
 }) {
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data} margin={{ top: 24, right: 16, left: -8, bottom: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--color-border)" strokeDasharray="4 4" />
         <XAxis dataKey={xKey} {...axisProps} />
@@ -280,7 +294,8 @@ export function SimpleLineChart({
           />
         </Line>
       </LineChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -299,7 +314,8 @@ export function FunnelChartComp({
     fill: SERIES[i % SERIES.length],
   }))
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <FunnelChart>
         <Tooltip content={<ChartTooltip />} />
         <Funnel
@@ -328,7 +344,8 @@ export function FunnelChartComp({
           />
         </Funnel>
       </FunnelChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -347,7 +364,8 @@ export function RadialGaugeChart({
     fill: SERIES[i % SERIES.length],
   }))
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <RadialBarChart
         data={chartData}
         innerRadius="28%"
@@ -375,7 +393,8 @@ export function RadialGaugeChart({
         />
         <Tooltip content={<ChartTooltip />} />
       </RadialBarChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }
 
@@ -390,7 +409,8 @@ export function RadarChartComp({
   series: { key: string; name: string }[]
 }) {
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ChartFrame>
+      <ResponsiveContainer width="100%" height="100%">
       <RadarChart data={data} margin={{ top: 12, right: 12, bottom: 12, left: 12 }}>
         <PolarGrid stroke="var(--color-border)" />
         <PolarAngleAxis
@@ -415,6 +435,7 @@ export function RadarChartComp({
         <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
         <Tooltip content={<ChartTooltip />} />
       </RadarChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </ChartFrame>
   )
 }

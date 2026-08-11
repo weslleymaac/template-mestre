@@ -1,3 +1,6 @@
+/** Root onde o zoom do app é aplicado (overlays flutuantes usam o mesmo). */
+export const APP_ZOOM_ROOT_ID = 'app-zoom-root'
+
 export type ZoomId = 'compact' | 'default' | 'comfortable' | 'auto'
 
 export type ZoomOption = {

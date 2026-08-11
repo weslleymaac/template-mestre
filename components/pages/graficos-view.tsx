@@ -25,6 +25,7 @@ import {
   TRAFFIC_SOURCES,
   VISITS_WEEKLY,
 } from '@/lib/mock-data'
+import { cn } from '@/lib/utils'
 
 const SEGMENT_OPTIONS = [
   { value: 'all', label: 'Todos os segmentos' },
@@ -37,24 +38,24 @@ export function GraficosView() {
   const [segment, setSegment] = useState('all')
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6">
       {/* Filtros */}
       <Card className="p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+          <div className="min-w-0">
             <h2 className="text-sm font-semibold">Filtros</h2>
             <p className="text-xs text-muted-foreground">
               Ajuste o período e o segmento para atualizar os indicadores.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:flex-row">
             <Combobox
               options={SEGMENT_OPTIONS}
               value={segment}
               onChange={setSegment}
-              className="sm:w-52"
+              className="w-full sm:w-52"
             />
-            <DateRangePicker className="sm:w-64" />
+            <DateRangePicker className="w-full sm:w-64" />
           </div>
         </div>
       </Card>
@@ -83,7 +84,7 @@ export function GraficosView() {
       </div>
 
       {/* Gráficos */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
         <ChartCard
           title="Receita x Despesa"
           description="Comparativo mensal (colunas)"
@@ -168,12 +169,12 @@ function ChartCard({
   children: React.ReactNode
 }) {
   return (
-    <Card className={className}>
+    <Card className={cn('min-w-0 overflow-hidden', className)}>
       <CardHeader>
         <CardTitle className="text-base">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      <CardContent>{children}</CardContent>
+      <CardContent className="min-w-0">{children}</CardContent>
     </Card>
   )
 }

@@ -23,15 +23,15 @@ export function ShowcaseSpa() {
     visibility === 'hidden' ? 'max-w-screen-2xl' : 'max-w-6xl'
 
   return (
-    <Tabs defaultValue="componentes" className="gap-0">
+    <Tabs defaultValue="componentes" className="min-w-0 gap-0">
       <div className="sticky top-16 z-20 border-b border-border bg-background/80 backdrop-blur-md">
         <div
           className={cn(
-            'mx-auto px-4 py-3 sm:px-6 lg:px-8',
+            'mx-auto w-full min-w-0 px-4 py-3 sm:px-6 lg:px-8',
             containerWidth,
           )}
         >
-          <div className="-mx-1 overflow-x-auto px-1">
+          <div className="-mx-1 overflow-x-auto overscroll-x-contain px-1">
             <TabsList className="w-max">
               {SECTIONS.map((s) => {
                 const Icon = s.icon
@@ -47,7 +47,12 @@ export function ShowcaseSpa() {
         </div>
       </div>
 
-      <div className={cn('mx-auto px-4 py-6 sm:px-6 lg:px-8', containerWidth)}>
+      <div
+        className={cn(
+          'mx-auto w-full min-w-0 px-4 py-6 sm:px-6 lg:px-8',
+          containerWidth,
+        )}
+      >
         <TabsPanel>
           <TabsContent value="componentes">
             <ComponentesView />

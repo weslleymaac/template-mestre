@@ -2,7 +2,8 @@
 
 import { X } from '@/components/ui/icons'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 
 type DialogProps = {
@@ -32,6 +33,10 @@ export function Dialog({
 }: DialogProps) {
   const hasBody = Boolean(children)
   const isCompact = !hasBody && Boolean(description)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+
   // Fecha com Esc e trava o scroll do body enquanto aberto.
   useEffect(() => {
     if (!open) return
@@ -47,10 +52,12 @@ export function Dialog({
     }
   }, [open, onClose])
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -63,17 +70,17 @@ export function Dialog({
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.98 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              'relative z-10 flex max-h-[90svh] w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-popover shadow-xl sm:max-w-lg sm:rounded-2xl',
+              'relative z-10 flex max-h-[min(90svh,calc(100%-2rem))] w-full min-w-0 max-w-lg flex-col overflow-hidden rounded-2xl border border-border bg-popover shadow-xl',
               className,
             )}
           >
             {(title || (hasBody && description)) && (
-              <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
+              <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-4 sm:gap-4 sm:px-6">
                 <div className="min-w-0">
                   {title && (
                     <h2 className="font-heading text-lg font-semibold tracking-tight text-foreground">
@@ -81,7 +88,12 @@ export function Dialog({
                     </h2>
                   )}
                   {hasBody && description && (
-                    <p className={cn('text-sm text-muted-foreground text-pretty', title && 'mt-1')}>
+                    <p
+                      className={cn(
+                        'text-sm text-muted-foreground text-pretty',
+                        title && 'mt-1',
+                      )}
+                    >
                       {description}
                     </p>
                   )}
@@ -98,7 +110,7 @@ export function Dialog({
             )}
 
             {isCompact && description && (
-              <div className="px-6 py-5">
+              <div className="px-4 py-5 sm:px-6">
                 <div className="flex items-start gap-4">
                   {icon && (
                     <div
@@ -120,17 +132,20 @@ export function Dialog({
             )}
 
             {hasBody && (
-              <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+                {children}
+              </div>
             )}
 
             {footer && (
-              <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-4 py-4 sm:px-6">
                 {footer}
               </div>
             )}
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

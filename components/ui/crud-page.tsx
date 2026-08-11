@@ -163,34 +163,34 @@ export function CrudPage<T>({
   }, [columns, canEdit, canDelete])
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-5">
       {/* Cabeçalho: nome + descrição + botão Novo */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+        <div className="min-w-0 flex-1 sm:max-w-2xl">
           <h2 className="font-display text-2xl font-semibold tracking-tight text-balance">
             {title}
           </h2>
           {description && (
-            <p className="mt-1 max-w-2xl text-sm text-muted-foreground text-pretty">
+            <p className="mt-1 text-sm text-muted-foreground text-pretty">
               {description}
             </p>
           )}
         </div>
-        <Button onClick={openCreate} className="shrink-0">
+        <Button onClick={openCreate} className="w-full shrink-0 sm:mt-0.5 sm:w-auto">
           <Plus className="size-4" />
           {newLabel}
         </Button>
       </div>
 
       {/* Controles: busca universal + alternância tabela/card */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 flex-1 items-center gap-2 rounded-xl border border-input bg-background px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
+        <div className="flex h-10 min-w-0 flex-1 basis-48 items-center gap-2 rounded-xl border border-input bg-background px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
           <Search className="size-4 shrink-0 text-muted-foreground" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
-            className="h-full w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className="h-full w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
 

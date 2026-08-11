@@ -14,7 +14,7 @@ export function Toolbar({
     <div
       role="toolbar"
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-xl border border-border bg-card p-1 shadow-sm',
+        'inline-flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl border border-border bg-card p-1 shadow-sm',
         className,
       )}
     >

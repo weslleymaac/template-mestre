@@ -181,11 +181,11 @@ export function DataTable<T>({
   }
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
+    <div className={cn('flex min-w-0 flex-col gap-3', className)}>
       {(searchable || onAddRow) && (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           {searchable && (
-            <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl border border-input bg-background px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
+            <div className="flex h-10 min-w-0 flex-1 basis-48 items-center gap-2 rounded-xl border border-input bg-background px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
               <Search className="size-4 shrink-0 text-muted-foreground" />
               <input
                 value={query}
@@ -194,7 +194,7 @@ export function DataTable<T>({
                   setPage(0)
                 }}
                 placeholder={searchPlaceholder}
-                className="h-full w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                className="h-full w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               />
             </div>
           )}
@@ -204,7 +204,7 @@ export function DataTable<T>({
               size="sm"
               variant="outline"
               onClick={onAddRow}
-              className="shrink-0"
+              className="w-full shrink-0 sm:w-auto"
             >
               <Plus />
               {addRowLabel}
@@ -213,9 +213,9 @@ export function DataTable<T>({
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-border">
-        <div className="overflow-x-auto">
-          <table className="w-full table-fixed text-sm">
+      <div className="min-w-0 overflow-hidden rounded-2xl border border-border">
+        <div className="overflow-x-auto overscroll-x-contain">
+          <table className="w-full min-w-max table-fixed text-sm">
             <colgroup>
               {columns.map((col) => (
                 <col key={col.key} style={colStyle(col)} />
@@ -322,11 +322,11 @@ export function DataTable<T>({
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
+      <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <span>
           {sorted.length} registro{sorted.length === 1 ? '' : 's'}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between gap-1 sm:justify-end">
           <button
             type="button"
             disabled={safePage === 0}
