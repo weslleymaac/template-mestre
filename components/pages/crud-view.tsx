@@ -32,6 +32,7 @@ const columns: Column<Cliente>[] = [
     key: 'nome',
     header: 'Cliente',
     sortable: true,
+    filterAccessor: (r) => `${r.nome} ${r.email}`,
     cell: (r) => (
       <div className="flex flex-col">
         <span className="font-medium text-foreground">{r.nome}</span>
@@ -162,6 +163,7 @@ export function CrudView() {
         </Card>
       )}
       searchPlaceholder="Buscar clientes..."
+      storageKey="crud-clientes"
       newLabel="Novo cliente"
       createTitle="Novo cliente"
       createDescription="Preencha os dados para cadastrar um novo cliente."

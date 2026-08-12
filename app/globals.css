@@ -399,6 +399,24 @@
   --chart-5: oklch(0.54 0.16 300);
 }
 
+/* Fallback da paleta personalizada (valores reais vêm via JS). */
+[data-palette='custom'] {
+  --primary: #0d9488;
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-soft: color-mix(in oklab, #0d9488 14%, white);
+  --ring: #0d9488;
+  --sidebar-primary: #0d9488;
+  --sidebar-ring: #0d9488;
+  --chart-1: #0d9488;
+  --chart-2: color-mix(in oklab, #0d9488 75%, oklch(0.75 0.12 200));
+  --chart-3: color-mix(in oklab, #0d9488 70%, oklch(0.55 0.14 280));
+  --chart-4: color-mix(in oklab, #0d9488 65%, oklch(0.8 0.12 140));
+  --chart-5: color-mix(in oklab, #0d9488 60%, oklch(0.5 0.1 320));
+}
+.dark[data-palette='custom'] {
+  --primary-soft: color-mix(in oklab, #0d9488 28%, black);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

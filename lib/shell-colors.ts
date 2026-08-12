@@ -1,7 +1,7 @@
-import { PALETTES, type PaletteId } from '@/lib/palettes'
+import { PALETTES, type PresetPaletteId } from '@/lib/palettes'
 
 /** Cor de fundo da barra lateral. */
-export type SidebarColorId = 'neutral' | 'white' | PaletteId
+export type SidebarColorId = 'neutral' | 'white' | PresetPaletteId | 'custom'
 
 /** Tom do fundo principal da aplicação. */
 export type BackgroundToneId = 'white' | 'neutral'
@@ -52,8 +52,17 @@ const WHITE_SIDEBAR: SidebarSurface = {
   border: '#EBEBEB',
 }
 
+const CUSTOM_SIDEBAR_SURFACE: SidebarSurface = {
+  sidebar: 'color-mix(in oklab, var(--primary) 52%, black)',
+  accent: 'oklch(1 0 0 / 0.12)',
+  border: 'oklch(1 0 0 / 0.12)',
+  solid: true,
+  foreground: 'oklch(0.98 0 0)',
+  accentForeground: 'oklch(0.98 0 0)',
+}
+
 /** Fundo sólido escuro por paleta — texto e ícones invertidos para claro. */
-const PALETTE_SIDEBAR_SURFACES: Record<PaletteId, SidebarSurface> = {
+const PALETTE_SIDEBAR_SURFACES: Record<PresetPaletteId, SidebarSurface> = {
   emerald: {
     sidebar: 'oklch(0.36 0.11 162)',
     accent: 'oklch(1 0 0 / 0.12)',
@@ -158,6 +167,11 @@ export const SIDEBAR_COLOR_OPTIONS: SidebarColorOption[] = [
     label: p.name,
     swatch: p.swatch,
   })),
+  {
+    id: 'custom',
+    label: 'Personalizada',
+    swatch: 'var(--primary)',
+  },
   { id: 'neutral', label: 'Neutro (#F9FAFB)', swatch: '#F9FAFB' },
   { id: 'white', label: 'Branco', swatch: '#FFFFFF', icon: 'sun' as const },
 ]
@@ -177,6 +191,7 @@ export function isSolidSidebarColor(id: SidebarColorId): boolean {
 export function getSidebarSurface(id: SidebarColorId): SidebarSurface {
   if (id === 'neutral') return NEUTRAL_SIDEBAR
   if (id === 'white') return WHITE_SIDEBAR
+  if (id === 'custom') return CUSTOM_SIDEBAR_SURFACE
   return PALETTE_SIDEBAR_SURFACES[id]
 }
 

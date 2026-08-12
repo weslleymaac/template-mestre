@@ -4,7 +4,8 @@ import {
   ICON_SET_OPTIONS,
   type IconSetId,
 } from '@/lib/icon-set'
-import { DEFAULT_PALETTE, PALETTES, type PaletteId } from '@/lib/palettes'
+import { DEFAULT_CUSTOM_COLOR, isValidHex, normalizeHex } from '@/lib/custom-palette'
+import { DEFAULT_PALETTE, isPaletteId, type PaletteId } from '@/lib/palettes'
 import { DEFAULT_RADIUS, RADIUS_MAX, RADIUS_MIN } from '@/lib/radius'
 import { DEFAULT_SHADOW, SHADOW_PRESETS, type ShadowId } from '@/lib/shadows'
 import {
@@ -35,7 +36,7 @@ import { DEFAULT_ZOOM, ZOOM_OPTIONS, type ZoomId } from '@/lib/zoom'
  * Versão do schema do preset. Incremente quando mudar a estrutura para
  * permitir migrações ao ler presets antigos salvos no banco de dados.
  */
-export const PRESET_VERSION = 3
+export const PRESET_VERSION = 4
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -47,6 +48,8 @@ export type AppPreset = {
   version: number
   theme: ThemeMode
   palette: PaletteId
+  /** Hex da cor personalizada (usado quando palette === 'custom'). */
+  customColor: string
   radius: number
   shadow: ShadowId
   density: DensityId
@@ -64,6 +67,7 @@ export const DEFAULT_PRESET: AppPreset = {
   version: PRESET_VERSION,
   theme: 'system',
   palette: DEFAULT_PALETTE,
+  customColor: DEFAULT_CUSTOM_COLOR,
   radius: DEFAULT_RADIUS,
   shadow: DEFAULT_SHADOW,
   density: DEFAULT_DENSITY,
@@ -109,9 +113,15 @@ export function parsePreset(input: string | unknown): ParseResult {
 
   const obj = raw as Record<string, unknown>
 
-  const palette = PALETTES.some((p) => p.id === obj.palette)
-    ? (obj.palette as PaletteId)
-    : DEFAULT_PRESET.palette
+  const palette =
+    typeof obj.palette === 'string' && isPaletteId(obj.palette)
+      ? obj.palette
+      : DEFAULT_PRESET.palette
+
+  const customColor =
+    typeof obj.customColor === 'string' && isValidHex(obj.customColor)
+      ? (normalizeHex(obj.customColor) ?? DEFAULT_PRESET.customColor)
+      : DEFAULT_PRESET.customColor
 
   const shadow = SHADOW_PRESETS.some((s) => s.id === obj.shadow)
     ? (obj.shadow as ShadowId)
@@ -174,6 +184,7 @@ export function parsePreset(input: string | unknown): ParseResult {
       version,
       theme,
       palette,
+      customColor,
       radius,
       shadow,
       density,

@@ -11,9 +11,13 @@ export type PaletteId =
   | 'lime'
   | 'red'
   | 'indigo'
+  | 'custom'
+
+/** Paletas pré-definidas (sem a cor personalizada). */
+export type PresetPaletteId = Exclude<PaletteId, 'custom'>
 
 export type Palette = {
-  id: PaletteId
+  id: PresetPaletteId
   name: string
   /** cor de referência usada para o "swatch" principal no seletor */
   swatch: string
@@ -97,3 +101,11 @@ export const PALETTES: Palette[] = [
 ]
 
 export const DEFAULT_PALETTE: PaletteId = 'emerald'
+
+export function isPresetPaletteId(id: string): id is PresetPaletteId {
+  return PALETTES.some((p) => p.id === id)
+}
+
+export function isPaletteId(id: string): id is PaletteId {
+  return id === 'custom' || isPresetPaletteId(id)
+}

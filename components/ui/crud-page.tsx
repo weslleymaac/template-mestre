@@ -36,6 +36,8 @@ type CrudPageProps<T> = {
   newLabel?: string
   /** Visão inicial */
   defaultView?: ViewMode
+  /** Chave do localStorage para ordem/visibilidade das colunas da tabela */
+  storageKey?: string
 
   /* ---- Popup de formulário (compartilhado entre criar e editar) ---- */
   /** Campos do formulário (mesmos inputs para criar/editar, ligados ao estado do pai) */
@@ -85,6 +87,7 @@ export function CrudPage<T>({
   searchPlaceholder = 'Buscar...',
   newLabel = 'Novo',
   defaultView = 'table',
+  storageKey,
   form,
   submitDisabled,
   submitLabel = 'Salvar',
@@ -149,6 +152,9 @@ export function CrudPage<T>({
         key: '__actions',
         header: 'Ações',
         align: 'right',
+        filterable: false,
+        hideable: false,
+        sortable: false,
         cell: (row) => (
           <div className="flex justify-end">
             <RowActions
@@ -214,7 +220,12 @@ export function CrudPage<T>({
 
       {/* Conteúdo */}
       {view === 'table' ? (
-        <DataTable columns={columnsWithActions} data={filtered} searchable={false} />
+        <DataTable
+          columns={columnsWithActions}
+          data={filtered}
+          searchable={false}
+          storageKey={storageKey ?? 'crud-page'}
+        />
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl border border-border px-4 py-12 text-center text-sm text-muted-foreground">
           Nenhum registro encontrado.

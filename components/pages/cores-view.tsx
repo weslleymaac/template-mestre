@@ -1,7 +1,8 @@
 'use client'
 
 import { useTheme } from 'next-themes'
-import { Check, Moon, Sun } from '@/components/ui/icons'
+import { useRef } from 'react'
+import { Check, Moon, Plus, Sun } from '@/components/ui/icons'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { usePalette } from '@/components/providers/palette-provider'
 import { PALETTES } from '@/lib/palettes'
@@ -19,8 +20,9 @@ const SWATCHES = [
 ]
 
 export function CoresView() {
-  const { palette, setPalette } = usePalette()
+  const { palette, setPalette, customColor, setCustomColor } = usePalette()
   const { theme, setTheme } = useTheme()
+  const colorInputRef = useRef<HTMLInputElement>(null)
 
   return (
     <div className="flex min-w-0 flex-col gap-6">
@@ -53,7 +55,7 @@ export function CoresView() {
         <CardHeader>
           <CardTitle className="text-base">Paleta de cores</CardTitle>
           <CardDescription>
-            Escolha uma paleta — ela é aplicada instantaneamente em todo o sistema.
+            Escolha uma paleta pronta ou personalize a cor principal do sistema.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -61,6 +63,7 @@ export function CoresView() {
             {PALETTES.map((p) => (
               <button
                 key={p.id}
+                type="button"
                 onClick={() => setPalette(p.id)}
                 className={cn(
                   'group flex flex-col gap-3 rounded-xl border p-4 text-left transition-all hover:border-primary/50',
@@ -82,6 +85,52 @@ export function CoresView() {
                 </div>
               </button>
             ))}
+
+            <button
+              type="button"
+              onClick={() => {
+                setCustomColor(customColor)
+                colorInputRef.current?.click()
+              }}
+              className={cn(
+                'group flex flex-col gap-3 rounded-xl border p-4 text-left transition-all hover:border-primary/50',
+                palette === 'custom'
+                  ? 'border-primary ring-2 ring-primary/30'
+                  : 'border-border border-dashed',
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Personalizada</span>
+                {palette === 'custom' && <Check className="size-4 text-primary" />}
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  className="grid size-7 place-items-center rounded-full border border-border/50"
+                  style={{
+                    background:
+                      palette === 'custom'
+                        ? customColor
+                        : 'conic-gradient(from 180deg, #ef4444, #eab308, #22c55e, #06b6d4, #3b82f6, #a855f7, #ef4444)',
+                  }}
+                >
+                  {palette !== 'custom' && (
+                    <Plus className="size-3.5 text-white drop-shadow" strokeWidth={2.5} />
+                  )}
+                </span>
+                <span className="font-mono text-xs text-muted-foreground uppercase">
+                  {customColor}
+                </span>
+              </div>
+              <input
+                ref={colorInputRef}
+                type="color"
+                value={customColor}
+                onChange={(e) => setCustomColor(e.target.value)}
+                className="sr-only"
+                tabIndex={-1}
+                aria-hidden
+              />
+            </button>
           </div>
         </CardContent>
       </Card>
@@ -120,6 +169,7 @@ function ModeButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         'flex items-center gap-3 rounded-xl border p-4 transition-all',

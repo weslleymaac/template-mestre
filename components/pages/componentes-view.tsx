@@ -70,7 +70,12 @@ const statusVariant = {
 } as const
 
 const columns: Column<Cliente>[] = [
-  { key: 'nome', header: 'Cliente', sortable: true, cell: (r) => (
+  {
+    key: 'nome',
+    header: 'Cliente',
+    sortable: true,
+    filterAccessor: (r) => `${r.nome} ${r.email}`,
+    cell: (r) => (
     <div className="flex flex-col">
       <span className="font-medium text-foreground">{r.nome}</span>
       <span className="text-xs text-muted-foreground">{r.email}</span>
@@ -192,13 +197,14 @@ export function ComponentesView() {
       {/* Tabela */}
       <DemoCard
         title="Tabela de dados"
-        description="Colunas ordenáveis e redimensionáveis, busca, paginação e adição de linhas."
+        description="Filtros na setinha ou abaixo das colunas (engrenagem), ordem/visibilidade, busca e paginação."
       >
         <DataTable
           columns={columns}
           data={clientes}
           onAddRow={handleAddCliente}
           resizableColumns
+          storageKey="componentes-clientes"
         />
       </DemoCard>
 

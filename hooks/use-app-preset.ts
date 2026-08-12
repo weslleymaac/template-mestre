@@ -21,7 +21,7 @@ import {
  */
 export function useAppPreset() {
   const { theme, setTheme } = useTheme()
-  const { palette, setPalette } = usePalette()
+  const { palette, setPalette, customColor, setCustomColor } = usePalette()
   const { radius, setRadius } = useRadius()
   const { shadow, setShadow } = useShadow()
   const { density, setDensity } = useDensity()
@@ -46,6 +46,7 @@ export function useAppPreset() {
     version: PRESET_VERSION,
     theme: (theme as ThemeMode) ?? 'system',
     palette,
+    customColor,
     radius,
     shadow,
     density,
@@ -61,7 +62,10 @@ export function useAppPreset() {
 
   const applyPreset = (next: AppPreset) => {
     setTheme(next.theme)
-    setPalette(next.palette)
+    setCustomColor(next.customColor, { activate: next.palette === 'custom' })
+    if (next.palette !== 'custom') {
+      setPalette(next.palette)
+    }
     setRadius(next.radius)
     setShadow(next.shadow)
     setDensity(next.density)
