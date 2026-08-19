@@ -37,15 +37,25 @@ function srgbChannel(c: number) {
   return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
 }
 
-/** Texto claro ou escuro conforme o contraste da cor. */
-export function contrastForeground(hex: string): string {
+function relativeLuminance(hex: string): number | null {
   const rgb = parseHex(hex)
-  if (!rgb) return 'oklch(0.99 0 0)'
-  const lum =
+  if (!rgb) return null
+  return (
     0.2126 * srgbChannel(rgb.r) +
     0.7152 * srgbChannel(rgb.g) +
     0.0722 * srgbChannel(rgb.b)
-  return lum > 0.55 ? 'oklch(0.21 0.01 250)' : 'oklch(0.99 0 0)'
+  )
+}
+
+/** True quando a cor é clara o bastante para exigir texto escuro. */
+export function isLightColor(hex: string): boolean {
+  const lum = relativeLuminance(hex)
+  return lum == null ? false : lum > 0.55
+}
+
+/** Texto claro ou escuro conforme o contraste da cor. */
+export function contrastForeground(hex: string): string {
+  return isLightColor(hex) ? 'oklch(0.21 0.01 250)' : 'oklch(0.99 0 0)'
 }
 
 export function normalizeHex(hex: string): string | null {

@@ -97,7 +97,7 @@ export function DateRangePicker({
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'flex h-10 w-full min-w-0 items-center gap-2 rounded-xl border border-input bg-background px-3.5 text-sm shadow-sm transition-all outline-none',
+          'flex h-10 w-full min-w-0 items-center gap-2 rounded-xl border border-input bg-white dark:bg-card px-3.5 text-sm shadow-sm transition-all outline-none',
           'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
           open && 'border-ring ring-3 ring-ring/25',
         )}

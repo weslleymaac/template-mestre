@@ -487,7 +487,7 @@ export function DataTable<T>({
       {showToolbar && (
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           {searchable && (
-            <div className="flex h-10 min-w-0 flex-1 basis-48 items-center gap-2 rounded-xl border border-input bg-background px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
+            <div className="flex h-10 min-w-0 flex-1 basis-48 items-center gap-2 rounded-xl border border-input bg-white dark:bg-card px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
               <Search className="size-4 shrink-0 text-muted-foreground" />
               <input
                 value={query}
@@ -670,7 +670,7 @@ export function DataTable<T>({
                             }
                             placeholder="Filtrar..."
                             aria-label={`Filtrar coluna ${col.header}`}
-                            className="h-8 w-full min-w-0 rounded-lg border border-input bg-background px-2.5 text-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/25"
+                            className="h-8 w-full min-w-0 rounded-lg border border-input bg-white dark:bg-card px-2.5 text-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/25"
                           />
                         ) : (
                           <span className="block h-8" />
@@ -1049,7 +1049,7 @@ function ColumnFilterTrigger({
         )}
 
         <div className="border-b border-border p-2">
-          <div className="flex h-9 items-center gap-2 rounded-lg border border-input bg-background px-2.5">
+          <div className="flex h-9 items-center gap-2 rounded-lg border border-input bg-white dark:bg-card px-2.5">
             <Search className="size-3.5 shrink-0 text-muted-foreground" />
             <input
               autoFocus

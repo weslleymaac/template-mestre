@@ -10,6 +10,8 @@ import { DEFAULT_RADIUS, RADIUS_MAX, RADIUS_MIN } from '@/lib/radius'
 import { DEFAULT_SHADOW, SHADOW_PRESETS, type ShadowId } from '@/lib/shadows'
 import {
   DEFAULT_BACKGROUND_TONE,
+  DEFAULT_CUSTOM_BACKGROUND_COLOR,
+  DEFAULT_CUSTOM_SIDEBAR_COLOR,
   DEFAULT_SIDEBAR_COLOR,
   isBackgroundToneId,
   isSidebarColorId,
@@ -36,7 +38,7 @@ import { DEFAULT_ZOOM, ZOOM_OPTIONS, type ZoomId } from '@/lib/zoom'
  * Versão do schema do preset. Incremente quando mudar a estrutura para
  * permitir migrações ao ler presets antigos salvos no banco de dados.
  */
-export const PRESET_VERSION = 4
+export const PRESET_VERSION = 5
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -59,7 +61,11 @@ export type AppPreset = {
   sidebarMode: SidebarMode
   sidebarMenuEffect: SidebarMenuEffect
   sidebarColor: SidebarColorId
+  /** Hex da cor personalizada da barra (quando sidebarColor === 'custom'). */
+  customSidebarColor: string
   backgroundTone: BackgroundToneId
+  /** Hex da cor personalizada do fundo (quando backgroundTone === 'custom'). */
+  customBackgroundColor: string
   iconSet: IconSetId
 }
 
@@ -77,7 +83,9 @@ export const DEFAULT_PRESET: AppPreset = {
   sidebarMode: DEFAULT_SIDEBAR_MODE,
   sidebarMenuEffect: DEFAULT_SIDEBAR_MENU_EFFECT,
   sidebarColor: DEFAULT_SIDEBAR_COLOR,
+  customSidebarColor: DEFAULT_CUSTOM_SIDEBAR_COLOR,
   backgroundTone: DEFAULT_BACKGROUND_TONE,
+  customBackgroundColor: DEFAULT_CUSTOM_BACKGROUND_COLOR,
   iconSet: DEFAULT_ICON_SET,
 }
 
@@ -159,9 +167,23 @@ export function parsePreset(input: string | unknown): ParseResult {
     ? obj.sidebarColor
     : DEFAULT_PRESET.sidebarColor
 
+  const customSidebarColor =
+    typeof obj.customSidebarColor === 'string' &&
+    isValidHex(obj.customSidebarColor)
+      ? (normalizeHex(obj.customSidebarColor) ??
+        DEFAULT_PRESET.customSidebarColor)
+      : DEFAULT_PRESET.customSidebarColor
+
   const backgroundTone = isBackgroundToneId(obj.backgroundTone)
     ? obj.backgroundTone
     : DEFAULT_PRESET.backgroundTone
+
+  const customBackgroundColor =
+    typeof obj.customBackgroundColor === 'string' &&
+    isValidHex(obj.customBackgroundColor)
+      ? (normalizeHex(obj.customBackgroundColor) ??
+        DEFAULT_PRESET.customBackgroundColor)
+      : DEFAULT_PRESET.customBackgroundColor
 
   const iconSet = ICON_SET_OPTIONS.some((i) => i.id === obj.iconSet)
     ? (obj.iconSet as IconSetId)
@@ -194,7 +216,9 @@ export function parsePreset(input: string | unknown): ParseResult {
       sidebarMode,
       sidebarMenuEffect,
       sidebarColor,
+      customSidebarColor,
       backgroundTone,
+      customBackgroundColor,
       iconSet,
     },
   }

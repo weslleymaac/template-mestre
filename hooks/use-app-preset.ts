@@ -37,8 +37,12 @@ export function useAppPreset() {
     setMenuEffect: setSidebarMenuEffect,
     sidebarColor,
     setSidebarColor,
+    customSidebarColor,
+    setCustomSidebarColor,
     backgroundTone,
     setBackgroundTone,
+    customBackgroundColor,
+    setCustomBackgroundColor,
   } = useSidebar()
   const { iconSet, setIconSet } = useIconSet()
 
@@ -56,7 +60,9 @@ export function useAppPreset() {
     sidebarMode,
     sidebarMenuEffect,
     sidebarColor,
+    customSidebarColor,
     backgroundTone,
+    customBackgroundColor,
     iconSet,
   }
 
@@ -74,8 +80,18 @@ export function useAppPreset() {
     setSidebarStyle(next.sidebarStyle)
     setSidebarMode(next.sidebarMode)
     setSidebarMenuEffect(next.sidebarMenuEffect)
-    setSidebarColor(next.sidebarColor)
-    setBackgroundTone(next.backgroundTone)
+    setCustomSidebarColor(next.customSidebarColor, {
+      activate: next.sidebarColor === 'custom',
+    })
+    if (next.sidebarColor !== 'custom') {
+      setSidebarColor(next.sidebarColor)
+    }
+    setCustomBackgroundColor(next.customBackgroundColor, {
+      activate: next.backgroundTone === 'custom',
+    })
+    if (next.backgroundTone !== 'custom') {
+      setBackgroundTone(next.backgroundTone)
+    }
     setIconSet(next.iconSet)
   }
 

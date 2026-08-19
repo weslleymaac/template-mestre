@@ -1,9 +1,10 @@
 'use client'
 
-import { Check, Plus } from '@/components/ui/icons'
+import { Check, Pipette } from '@/components/ui/icons'
 import { motion } from 'motion/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { usePalette } from '@/components/providers/palette-provider'
+import { ColorPicker } from '@/components/ui/color-picker'
 import { PALETTES } from '@/lib/palettes'
 import { cn } from '@/lib/utils'
 
@@ -15,12 +16,12 @@ export function PaletteSwitcher({
   className?: string
 }) {
   const { palette, setPalette, customColor, setCustomColor } = usePalette()
-  const colorInputRef = useRef<HTMLInputElement>(null)
+  const customRef = useRef<HTMLButtonElement>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   function openCustomPicker() {
-    // Ativa a cor atual e abre o seletor nativo para ajustar.
     setCustomColor(customColor)
-    colorInputRef.current?.click()
+    setPickerOpen(true)
   }
 
   if (variant === 'dots') {
@@ -41,9 +42,11 @@ export function PaletteSwitcher({
         ))}
 
         <button
+          ref={customRef}
           type="button"
           aria-label="Cor personalizada"
           title="Personalizar cor"
+          aria-expanded={pickerOpen}
           onClick={openCustomPicker}
           className={cn(
             'relative grid size-5 place-items-center overflow-hidden rounded-full ring-offset-2 ring-offset-background transition-all hover:scale-110',
@@ -56,17 +59,15 @@ export function PaletteSwitcher({
           }
         >
           {palette !== 'custom' && (
-            <Plus className="size-3 text-muted-foreground" strokeWidth={2.5} />
+            <Pipette className="size-3 text-muted-foreground" strokeWidth={2.25} />
           )}
         </button>
-        <input
-          ref={colorInputRef}
-          type="color"
+        <ColorPicker
           value={customColor}
-          onChange={(e) => setCustomColor(e.target.value)}
-          className="sr-only"
-          tabIndex={-1}
-          aria-hidden
+          onChange={setCustomColor}
+          open={pickerOpen}
+          onOpenChange={setPickerOpen}
+          anchorRef={customRef}
         />
       </div>
     )
@@ -113,8 +114,10 @@ export function PaletteSwitcher({
       })}
 
       <button
+        ref={customRef}
         type="button"
         onClick={openCustomPicker}
+        aria-expanded={pickerOpen}
         className={cn(
           'group relative flex flex-col items-center gap-3 rounded-2xl border bg-card p-4 text-sm transition-all',
           palette === 'custom'
@@ -140,20 +143,18 @@ export function PaletteSwitcher({
               <Check className="size-5" strokeWidth={3} />
             </motion.span>
           ) : (
-            <Plus className="size-5 text-white drop-shadow" strokeWidth={2.5} />
+            <Pipette className="size-5 text-white drop-shadow" strokeWidth={2.25} />
           )}
         </span>
         <span className="font-medium">Personalizada</span>
-        <input
-          ref={colorInputRef}
-          type="color"
-          value={customColor}
-          onChange={(e) => setCustomColor(e.target.value)}
-          className="sr-only"
-          tabIndex={-1}
-          aria-hidden
-        />
       </button>
+      <ColorPicker
+        value={customColor}
+        onChange={setCustomColor}
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        anchorRef={customRef}
+      />
     </div>
   )
 }

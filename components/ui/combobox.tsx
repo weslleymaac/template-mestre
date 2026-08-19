@@ -65,7 +65,7 @@ export function Combobox({
           paddingBlock: 'var(--field-py)',
         }}
         className={cn(
-          'flex w-full items-center gap-2 rounded-xl border border-input bg-background text-sm shadow-sm transition-all outline-none',
+          'flex w-full items-center gap-2 rounded-xl border border-input bg-white dark:bg-card text-sm shadow-sm transition-all outline-none',
           'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
           'disabled:cursor-not-allowed disabled:opacity-50',
           open && 'border-ring ring-3 ring-ring/25',

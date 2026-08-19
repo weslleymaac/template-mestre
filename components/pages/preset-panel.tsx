@@ -5,6 +5,7 @@ import {
   LayoutGrid,
   Menu,
   PanelLeft,
+  Pipette,
   RotateCcw,
   Settings2,
   Sun,
@@ -12,7 +13,8 @@ import {
 } from '@/components/ui/icons'
 import { GridViewIcon } from 'hugeicons-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { PaletteSwitcher } from '@/components/palette-switcher'
 import { PresetJsonCard } from '@/components/pages/preset-json-card'
 import { useDensity } from '@/components/providers/density-provider'
 import { useIconSet } from '@/components/providers/icon-set-provider'
@@ -21,6 +23,7 @@ import { useShadow } from '@/components/providers/shadow-provider'
 import { useSidebar } from '@/components/providers/sidebar-provider'
 import { useZoom } from '@/components/providers/zoom-provider'
 import { Button } from '@/components/ui/button'
+import { ColorPicker } from '@/components/ui/color-picker'
 import { Combobox } from '@/components/ui/combobox'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -42,10 +45,13 @@ import {
 import {
   BACKGROUND_TONE_OPTIONS,
   DEFAULT_BACKGROUND_TONE,
+  DEFAULT_CUSTOM_BACKGROUND_COLOR,
+  DEFAULT_CUSTOM_SIDEBAR_COLOR,
   DEFAULT_SIDEBAR_COLOR,
   SIDEBAR_COLOR_OPTIONS,
 } from '@/lib/shell-colors'
 import { ZOOM_OPTIONS } from '@/lib/zoom'
+import { cn } from '@/lib/utils'
 
 const ZOOM_COMBO_OPTIONS = ZOOM_OPTIONS.map((o) => ({
   value: o.id,
@@ -161,20 +167,31 @@ export function PresetPanel({
                   <SidebarControl />
                 </PresetSection>
 
-                {/* Cor da barra lateral */}
+                {/* Cores */}
                 <PresetSection
-                  title="Cor da barra lateral"
-                  description="Neutro, branco ou uma cor sólida da paleta."
+                  title="Cores"
+                  description="Tema, barra lateral e fundo da aplicação."
                 >
-                  <SidebarColorControl />
-                </PresetSection>
-
-                {/* Fundo da aplicação */}
-                <PresetSection
-                  title="Fundo da aplicação"
-                  description="Branco ou neutro (#F9FAFB)."
-                >
-                  <BackgroundToneControl />
+                  <div className="flex flex-col gap-5">
+                    <ColorSubSection
+                      title="Cor geral do tema"
+                      description="Paleta principal dos botões, links e destaques."
+                    >
+                      <ThemeColorControl />
+                    </ColorSubSection>
+                    <ColorSubSection
+                      title="Cor da barra"
+                      description="Fundo da barra lateral — preset ou personalizada."
+                    >
+                      <SidebarColorControl />
+                    </ColorSubSection>
+                    <ColorSubSection
+                      title="Cor de fundo"
+                      description="Fundo principal da aplicação."
+                    >
+                      <BackgroundToneControl />
+                    </ColorSubSection>
+                  </div>
                 </PresetSection>
 
                 {/* Estilo da barra lateral */}
@@ -428,8 +445,44 @@ function SidebarControl() {
   )
 }
 
+function ColorSubSection({
+  title,
+  description,
+  children,
+}: {
+  title: string
+  description: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div>
+        <p className="text-sm font-medium text-foreground">{title}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function ThemeColorControl() {
+  return <PaletteSwitcher variant="dots" />
+}
+
 function SidebarColorControl() {
-  const { sidebarColor, setSidebarColor } = useSidebar()
+  const {
+    sidebarColor,
+    setSidebarColor,
+    customSidebarColor,
+    setCustomSidebarColor,
+  } = useSidebar()
+  const customRef = useRef<HTMLButtonElement>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  function openCustomPicker() {
+    setCustomSidebarColor(customSidebarColor)
+    setPickerOpen(true)
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -437,6 +490,39 @@ function SidebarColorControl() {
         {SIDEBAR_COLOR_OPTIONS.map((option) => {
           const isActive = sidebarColor === option.id
           const isWhite = option.id === 'white'
+          const isCustom = option.id === 'custom'
+
+          if (isCustom) {
+            return (
+              <button
+                key={option.id}
+                ref={customRef}
+                type="button"
+                aria-label={option.label}
+                aria-pressed={isActive}
+                aria-expanded={pickerOpen}
+                title={option.label}
+                onClick={openCustomPicker}
+                className={cn(
+                  'relative grid size-7 place-items-center overflow-hidden rounded-full ring-offset-2 ring-offset-background transition-all hover:scale-110',
+                  isActive
+                    ? 'ring-2 ring-foreground'
+                    : 'border border-dashed border-foreground/35 bg-background',
+                )}
+                style={
+                  isActive ? { backgroundColor: customSidebarColor } : undefined
+                }
+              >
+                {!isActive && (
+                  <Pipette
+                    className="size-3.5 text-muted-foreground"
+                    strokeWidth={2.25}
+                  />
+                )}
+              </button>
+            )
+          }
+
           return (
             <button
               key={option.id}
@@ -447,24 +533,35 @@ function SidebarColorControl() {
               style={
                 option.icon ? undefined : { backgroundColor: option.swatch }
               }
-              className={`grid size-7 place-items-center rounded-full border transition-all hover:scale-110 ${
+              className={cn(
+                'grid size-7 place-items-center rounded-full border transition-all hover:scale-110',
                 isWhite
                   ? 'border-border bg-background text-foreground'
-                  : 'border-transparent'
-              } ${
-                isActive
-                  ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background'
-                  : ''
-              }`}
+                  : 'border-transparent',
+                isActive &&
+                  'ring-2 ring-foreground ring-offset-2 ring-offset-background',
+              )}
             >
               {option.icon === 'sun' && <Sun className="size-3.5" />}
             </button>
           )
         })}
+        <ColorPicker
+          value={customSidebarColor}
+          onChange={setCustomSidebarColor}
+          open={pickerOpen}
+          onOpenChange={setPickerOpen}
+          anchorRef={customRef}
+        />
       </div>
       <Button
         variant="outline"
-        onClick={() => setSidebarColor(DEFAULT_SIDEBAR_COLOR)}
+        onClick={() => {
+          setCustomSidebarColor(DEFAULT_CUSTOM_SIDEBAR_COLOR, {
+            activate: false,
+          })
+          setSidebarColor(DEFAULT_SIDEBAR_COLOR)
+        }}
         className="w-full"
       >
         <RotateCcw />
@@ -475,7 +572,19 @@ function SidebarColorControl() {
 }
 
 function BackgroundToneControl() {
-  const { backgroundTone, setBackgroundTone } = useSidebar()
+  const {
+    backgroundTone,
+    setBackgroundTone,
+    customBackgroundColor,
+    setCustomBackgroundColor,
+  } = useSidebar()
+  const customRef = useRef<HTMLButtonElement>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  function openCustomPicker() {
+    setCustomBackgroundColor(customBackgroundColor)
+    setPickerOpen(true)
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -483,24 +592,70 @@ function BackgroundToneControl() {
         {BACKGROUND_TONE_OPTIONS.map((option) => {
           const isActive = backgroundTone === option.id
           const isWhite = option.id === 'white'
+          const isCustom = option.id === 'custom'
+
+          if (isCustom) {
+            return (
+              <button
+                key={option.id}
+                ref={customRef}
+                type="button"
+                aria-pressed={isActive}
+                aria-expanded={pickerOpen}
+                onClick={openCustomPicker}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors',
+                  isActive
+                    ? 'border-primary bg-primary-soft text-primary'
+                    : 'border-border border-dashed bg-background hover:bg-muted',
+                )}
+              >
+                <span
+                  className={cn(
+                    'grid size-6 place-items-center overflow-hidden rounded-full border',
+                    isActive
+                      ? 'border-transparent'
+                      : 'border-dashed border-foreground/35 bg-background',
+                  )}
+                  style={
+                    isActive
+                      ? { backgroundColor: customBackgroundColor }
+                      : undefined
+                  }
+                >
+                  {!isActive && (
+                    <Pipette
+                      className="size-3 text-muted-foreground"
+                      strokeWidth={2.25}
+                    />
+                  )}
+                </span>
+                <span className="font-medium">{option.label}</span>
+                {isActive && <Check className="size-4 shrink-0" />}
+              </button>
+            )
+          }
+
           return (
             <button
               key={option.id}
               type="button"
               aria-pressed={isActive}
               onClick={() => setBackgroundTone(option.id)}
-              className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors ${
+              className={cn(
+                'flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors',
                 isActive
                   ? 'border-primary bg-primary-soft text-primary'
-                  : 'border-border bg-background hover:bg-muted'
-              }`}
+                  : 'border-border bg-background hover:bg-muted',
+              )}
             >
               <span
-                className={`grid size-6 place-items-center rounded-full border ${
+                className={cn(
+                  'grid size-6 place-items-center rounded-full border',
                   isWhite
                     ? 'border-border bg-background text-foreground'
-                    : 'border-transparent'
-                }`}
+                    : 'border-transparent',
+                )}
                 style={
                   option.icon ? undefined : { backgroundColor: option.value }
                 }
@@ -512,10 +667,22 @@ function BackgroundToneControl() {
             </button>
           )
         })}
+        <ColorPicker
+          value={customBackgroundColor}
+          onChange={setCustomBackgroundColor}
+          open={pickerOpen}
+          onOpenChange={setPickerOpen}
+          anchorRef={customRef}
+        />
       </div>
       <Button
         variant="outline"
-        onClick={() => setBackgroundTone(DEFAULT_BACKGROUND_TONE)}
+        onClick={() => {
+          setCustomBackgroundColor(DEFAULT_CUSTOM_BACKGROUND_COLOR, {
+            activate: false,
+          })
+          setBackgroundTone(DEFAULT_BACKGROUND_TONE)
+        }}
         className="w-full"
       >
         <RotateCcw />

@@ -49,7 +49,7 @@ export function MaskedInput({
         paddingBlock: 'var(--field-py)',
       }}
       className={cn(
-        'flex w-full items-center gap-2 rounded-xl border border-input bg-background text-sm shadow-sm transition-all',
+        'flex w-full items-center gap-2 rounded-xl border border-input bg-white dark:bg-card text-sm shadow-sm transition-all',
         'focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25',
         className,
       )}

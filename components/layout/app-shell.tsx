@@ -253,8 +253,8 @@ function SidebarContent({
   onToggleCollapse?: () => void
   onClose?: () => void
 }) {
-  const { menuEffect, sidebarColor } = useSidebar()
-  const solidSidebar = isSolidSidebarColor(sidebarColor)
+  const { menuEffect, sidebarColor, customSidebarColor } = useSidebar()
+  const solidSidebar = isSolidSidebarColor(sidebarColor, customSidebarColor)
 
   if (compact) {
     return (
@@ -416,8 +416,8 @@ function CompactSidebarContent({
   onNavigate: (href: string) => void
   menuEffect: SidebarMenuEffect
 }) {
-  const { sidebarColor } = useSidebar()
-  const solidSidebar = isSolidSidebarColor(sidebarColor)
+  const { sidebarColor, customSidebarColor } = useSidebar()
+  const solidSidebar = isSolidSidebarColor(sidebarColor, customSidebarColor)
 
   return (
     <div className="flex h-full flex-col">
@@ -472,8 +472,8 @@ function ProfileFooter({
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
-  const { sidebarColor } = useSidebar()
-  const solidSidebar = isSolidSidebarColor(sidebarColor)
+  const { sidebarColor, customSidebarColor } = useSidebar()
+  const solidSidebar = isSolidSidebarColor(sidebarColor, customSidebarColor)
   useClickOutside(ref, () => setOpen(false), open)
 
   const menuItems = [

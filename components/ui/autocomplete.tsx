@@ -78,7 +78,7 @@ export function Autocomplete({
           paddingBlock: 'var(--field-py)',
         }}
         className={cn(
-          'flex w-full rounded-xl border border-input bg-background text-sm shadow-sm transition-all outline-none',
+          'flex w-full rounded-xl border border-input bg-white dark:bg-card text-sm shadow-sm transition-all outline-none',
           'placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
         )}
       />

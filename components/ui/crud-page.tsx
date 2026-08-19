@@ -190,7 +190,7 @@ export function CrudPage<T>({
 
       {/* Controles: busca universal + alternância tabela/card */}
       <div className="flex min-w-0 flex-wrap items-center gap-3">
-        <div className="flex h-10 min-w-0 flex-1 basis-48 items-center gap-2 rounded-xl border border-input bg-background px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
+        <div className="flex h-10 min-w-0 flex-1 basis-48 items-center gap-2 rounded-xl border border-input bg-white dark:bg-card px-3.5 shadow-sm transition-all focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:max-w-xs">
           <Search className="size-4 shrink-0 text-muted-foreground" />
           <input
             value={query}

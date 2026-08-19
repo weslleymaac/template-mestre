@@ -2,10 +2,14 @@
 
 import { useTheme } from 'next-themes'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { normalizeHex } from '@/lib/custom-palette'
 import {
   applyShellColors,
   DEFAULT_BACKGROUND_TONE,
+  DEFAULT_CUSTOM_BACKGROUND_COLOR,
+  DEFAULT_CUSTOM_SIDEBAR_COLOR,
   DEFAULT_SIDEBAR_COLOR,
+  isBackgroundToneId,
   isSidebarColorId,
   type BackgroundToneId,
   type SidebarColorId,
@@ -32,8 +36,18 @@ type SidebarContextValue = {
   setMenuEffect: (effect: SidebarMenuEffect) => void
   sidebarColor: SidebarColorId
   setSidebarColor: (color: SidebarColorId) => void
+  customSidebarColor: string
+  setCustomSidebarColor: (
+    hex: string,
+    options?: { activate?: boolean },
+  ) => void
   backgroundTone: BackgroundToneId
   setBackgroundTone: (tone: BackgroundToneId) => void
+  customBackgroundColor: string
+  setCustomBackgroundColor: (
+    hex: string,
+    options?: { activate?: boolean },
+  ) => void
 }
 
 const SidebarContext = createContext<SidebarContextValue | null>(null)
@@ -43,7 +57,9 @@ const STYLE_KEY = 'v0-sidebar-style'
 const MODE_KEY = 'v0-sidebar-mode'
 const MENU_EFFECT_KEY = 'v0-sidebar-menu-effect'
 const SIDEBAR_COLOR_KEY = 'v0-sidebar-color'
+const CUSTOM_SIDEBAR_COLOR_KEY = 'v0-custom-sidebar-color'
 const BACKGROUND_TONE_KEY = 'v0-background-tone'
+const CUSTOM_BACKGROUND_COLOR_KEY = 'v0-custom-background-color'
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const { resolvedTheme } = useTheme()
@@ -57,8 +73,14 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarColor, setSidebarColorState] = useState<SidebarColorId>(
     DEFAULT_SIDEBAR_COLOR,
   )
+  const [customSidebarColor, setCustomSidebarColorState] = useState(
+    DEFAULT_CUSTOM_SIDEBAR_COLOR,
+  )
   const [backgroundTone, setBackgroundToneState] = useState<BackgroundToneId>(
     DEFAULT_BACKGROUND_TONE,
+  )
+  const [customBackgroundColor, setCustomBackgroundColorState] = useState(
+    DEFAULT_CUSTOM_BACKGROUND_COLOR,
   )
 
   useEffect(() => {
@@ -92,17 +114,33 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     if (storedSidebarColor && isSidebarColorId(storedSidebarColor)) {
       setSidebarColorState(storedSidebarColor)
     }
-    const storedBackgroundTone = window.localStorage.getItem(
-      BACKGROUND_TONE_KEY,
-    ) as BackgroundToneId | null
-    if (storedBackgroundTone === 'white' || storedBackgroundTone === 'neutral') {
+    const storedCustomSidebar = normalizeHex(
+      window.localStorage.getItem(CUSTOM_SIDEBAR_COLOR_KEY) ?? '',
+    )
+    if (storedCustomSidebar) setCustomSidebarColorState(storedCustomSidebar)
+
+    const storedBackgroundTone = window.localStorage.getItem(BACKGROUND_TONE_KEY)
+    if (storedBackgroundTone && isBackgroundToneId(storedBackgroundTone)) {
       setBackgroundToneState(storedBackgroundTone)
     }
+    const storedCustomBg = normalizeHex(
+      window.localStorage.getItem(CUSTOM_BACKGROUND_COLOR_KEY) ?? '',
+    )
+    if (storedCustomBg) setCustomBackgroundColorState(storedCustomBg)
   }, [])
 
   useEffect(() => {
-    applyShellColors(sidebarColor, backgroundTone, resolvedTheme === 'dark')
-  }, [sidebarColor, backgroundTone, resolvedTheme])
+    applyShellColors(sidebarColor, backgroundTone, resolvedTheme === 'dark', {
+      customSidebarColor,
+      customBackgroundColor,
+    })
+  }, [
+    sidebarColor,
+    backgroundTone,
+    customSidebarColor,
+    customBackgroundColor,
+    resolvedTheme,
+  ])
 
   const setVisibility = (next: SidebarVisibility) => {
     setVisibilityState(next)
@@ -129,9 +167,39 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(SIDEBAR_COLOR_KEY, next)
   }
 
+  const setCustomSidebarColor = (
+    hex: string,
+    options: { activate?: boolean } = {},
+  ) => {
+    const activate = options.activate !== false
+    const color = normalizeHex(hex)
+    if (!color) return
+    setCustomSidebarColorState(color)
+    window.localStorage.setItem(CUSTOM_SIDEBAR_COLOR_KEY, color)
+    if (activate) {
+      setSidebarColorState('custom')
+      window.localStorage.setItem(SIDEBAR_COLOR_KEY, 'custom')
+    }
+  }
+
   const setBackgroundTone = (next: BackgroundToneId) => {
     setBackgroundToneState(next)
     window.localStorage.setItem(BACKGROUND_TONE_KEY, next)
+  }
+
+  const setCustomBackgroundColor = (
+    hex: string,
+    options: { activate?: boolean } = {},
+  ) => {
+    const activate = options.activate !== false
+    const color = normalizeHex(hex)
+    if (!color) return
+    setCustomBackgroundColorState(color)
+    window.localStorage.setItem(CUSTOM_BACKGROUND_COLOR_KEY, color)
+    if (activate) {
+      setBackgroundToneState('custom')
+      window.localStorage.setItem(BACKGROUND_TONE_KEY, 'custom')
+    }
   }
 
   return (
@@ -147,8 +215,12 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         setMenuEffect,
         sidebarColor,
         setSidebarColor,
+        customSidebarColor,
+        setCustomSidebarColor,
         backgroundTone,
         setBackgroundTone,
+        customBackgroundColor,
+        setCustomBackgroundColor,
       }}
     >
       {children}

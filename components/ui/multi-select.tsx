@@ -63,7 +63,7 @@ export function MultiSelect({
           paddingBlock: 'calc(var(--field-py) - 0.125rem)',
         }}
         className={cn(
-          'flex w-full flex-wrap items-center gap-1.5 rounded-xl border border-input bg-background text-sm shadow-sm transition-all outline-none',
+          'flex w-full flex-wrap items-center gap-1.5 rounded-xl border border-input bg-white dark:bg-card text-sm shadow-sm transition-all outline-none',
           'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
           'disabled:cursor-not-allowed disabled:opacity-50',
           open && 'border-ring ring-3 ring-ring/25',

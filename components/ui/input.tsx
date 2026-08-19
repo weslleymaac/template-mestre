@@ -16,7 +16,7 @@ function Input({
         ...style,
       }}
       className={cn(
-        'flex w-full min-w-0 rounded-xl border border-input bg-background text-sm shadow-sm transition-[color,box-shadow] outline-none',
+        'flex w-full min-w-0 rounded-xl border border-input bg-white dark:bg-card text-sm shadow-sm transition-[color,box-shadow] outline-none',
         'placeholder:text-muted-foreground',
         'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25',
         'disabled:cursor-not-allowed disabled:opacity-50',

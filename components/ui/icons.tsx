@@ -96,6 +96,7 @@ import {
   Palette as LPalette,
   PanelLeft as LPanelLeft,
   Pencil as LPencil,
+  Pipette as LPipette,
   Plus as LPlus,
   Redo2 as LRedo2,
   RotateCcw as LRotateCcw,
@@ -183,6 +184,7 @@ export const Moon = createIcon(LMoon, huge(Moon02Icon))
 export const Palette = createIcon(LPalette, huge(PaintBoardIcon))
 export const PanelLeft = createIcon(LPanelLeft, huge(SidebarLeft01Icon))
 export const Pencil = createIcon(LPencil, huge(PencilEdit02Icon))
+export const Pipette = createIcon(LPipette)
 export const Plus = createIcon(LPlus, huge(PlusSignIcon))
 export const Redo2 = createIcon(LRedo2, huge(RedoIcon))
 export const RotateCcw = createIcon(LRotateCcw, huge(RefreshIcon))

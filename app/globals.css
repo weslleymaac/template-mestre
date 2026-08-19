@@ -90,10 +90,14 @@
   --badge-py: calc(0.1875rem * var(--pad-scale));
   --card-p: calc(1.5rem * var(--pad-scale));
   /* Preset de sombra padrão (sobrescrito em runtime pelo ShadowProvider) */
-  --app-shadow-sm: 0 1px 3px 0 hsl(220 40% 12% / 0.08), 0 1px 2px -1px hsl(220 40% 12% / 0.06);
-  --app-shadow-md: 0 4px 8px -2px hsl(220 40% 12% / 0.1), 0 2px 4px -2px hsl(220 40% 12% / 0.06);
-  --app-shadow-lg: 0 12px 20px -6px hsl(220 40% 12% / 0.12), 0 4px 8px -4px hsl(220 40% 12% / 0.08);
-  --app-shadow-xl: 0 20px 32px -10px hsl(220 40% 12% / 0.16), 0 8px 16px -8px hsl(220 40% 12% / 0.1);
+  --app-shadow-sm: 0 2px 6px hsl(215 28% 18% / 0.04), 0 8px 24px hsl(215 28% 18% / 0.06),
+    0 16px 40px -4px hsl(215 28% 18% / 0.05);
+  --app-shadow-md: 0 4px 10px hsl(215 28% 18% / 0.05), 0 12px 32px hsl(215 28% 18% / 0.07),
+    0 24px 48px -6px hsl(215 28% 18% / 0.06);
+  --app-shadow-lg: 0 6px 16px hsl(215 28% 18% / 0.055), 0 18px 44px hsl(215 28% 18% / 0.08),
+    0 32px 64px -8px hsl(215 28% 18% / 0.07);
+  --app-shadow-xl: 0 10px 24px hsl(215 28% 18% / 0.06), 0 28px 56px hsl(215 28% 18% / 0.09),
+    0 40px 80px -10px hsl(215 28% 18% / 0.08);
   --sidebar: oklch(0.99 0.002 240);
   --sidebar-foreground: oklch(0.21 0.01 250);
   --sidebar-accent: oklch(0.97 0.003 240);
