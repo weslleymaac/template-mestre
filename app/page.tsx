@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation'
+import { ShowcaseSpa } from '@/components/pages/showcase-spa'
 
 export default function Page() {
-  redirect('/analise-de-escala')
+  return <ShowcaseSpa />
 }

@@ -7,12 +7,10 @@ import { loadPreset } from '@/lib/preset-store'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Análise de escala',
-    template: '%s · Escala 5x2',
-  },
+  title: 'Nova UI — Design System',
   description:
-    'Preencha os dados da escala 5x2 e acompanhe a análise. A área administrativa fica separada.',
+    'Sistema de design profissional com componentes reutilizáveis, paletas de cores, dark mode e gráficos.',
+  generator: 'v0.app',
 }
 
 export const viewport: Viewport = {

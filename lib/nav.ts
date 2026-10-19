@@ -18,17 +18,23 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'Menu principal',
     items: [
       {
-        label: 'Análise de escala',
-        href: '/analise-de-escala',
-        icon: 'analytics',
-        description: 'Preenchimento dos dados da escala 5x2',
+        label: 'Painel',
+        href: '/',
+        icon: 'dashboard',
+        description: 'Componentes, cores, gráficos e telas de exemplo',
       },
-      {
-        label: 'Admin',
-        href: '/admin',
-        icon: 'settings',
-        description: 'Informações do banco de dados',
-      },
+      { label: 'Componentes', href: '/componentes', icon: 'components' },
+      { label: 'Usuários', href: '/usuarios', icon: 'users' },
+      { label: 'Relatórios', href: '/relatorios', icon: 'analytics' },
+      { label: 'Arquivos', href: '/arquivos', icon: 'files' },
+    ],
+  },
+  {
+    title: 'Configurações',
+    items: [
+      { label: 'Ajustes', href: '/ajustes', icon: 'settings' },
+      { label: 'Documentos', href: '/documentos', icon: 'document' },
+      { label: 'Notificações', href: '/notificacoes', icon: 'notification' },
     ],
   },
 ]
