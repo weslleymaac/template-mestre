@@ -22,6 +22,7 @@ type ComboboxProps = {
   emptyText?: string
   className?: string
   disabled?: boolean
+  'aria-label'?: string
 }
 
 export function Combobox({
@@ -33,6 +34,7 @@ export function Combobox({
   emptyText = 'Nenhum resultado encontrado.',
   className,
   disabled,
+  'aria-label': ariaLabel,
 }: ComboboxProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -58,6 +60,7 @@ export function Combobox({
       <button
         type="button"
         disabled={disabled}
+        aria-label={ariaLabel}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         style={{

@@ -22,8 +22,11 @@ import {
   ArrowUp01Icon,
   ArrowUpRight01Icon,
   AtIcon,
+  BalanceScaleIcon,
   Building01Icon,
+  Calculator01Icon,
   Calendar03Icon,
+  Clock01Icon,
   Cancel01Icon,
   CancelCircleIcon,
   CheckmarkCircle02Icon,
@@ -31,6 +34,7 @@ import {
   Database01Icon,
   Delete02Icon,
   Dollar01Icon,
+  Flag01Icon,
   Download04Icon,
   GridViewIcon,
   InformationCircleIcon,
@@ -45,7 +49,10 @@ import {
   RedoIcon,
   RefreshIcon,
   Search01Icon,
+  AiMagicIcon,
   Settings02Icon,
+  Shield01Icon,
+  Store01Icon,
   ShoppingBag01Icon,
   ShoppingCart01Icon,
   SidebarLeft01Icon,
@@ -73,7 +80,9 @@ import {
   BarChart3 as LBarChart3,
   Bold as LBold,
   Building2 as LBuilding2,
+  Calculator as LCalculator,
   CalendarDays as LCalendarDays,
+  Clock as LClock,
   Check as LCheck,
   CheckCircle2 as LCheckCircle2,
   ChevronLeft as LChevronLeft,
@@ -84,6 +93,7 @@ import {
   Database as LDatabase,
   DollarSign as LDollarSign,
   Download as LDownload,
+  Flag as LFlag,
   Info as LInfo,
   Italic as LItalic,
   LayoutGrid as LLayoutGrid,
@@ -100,9 +110,13 @@ import {
   Plus as LPlus,
   Redo2 as LRedo2,
   RotateCcw as LRotateCcw,
+  Scale as LScale,
   Search as LSearch,
   Settings2 as LSettings2,
+  Sparkles as LSparkles,
+  Shield as LShield,
   ShoppingBag as LShoppingBag,
+  Store as LStore,
   ShoppingCart as LShoppingCart,
   Sun as LSun,
   Table as LTable,
@@ -159,7 +173,9 @@ export const AtSign = createIcon(LAtSign, huge(AtIcon))
 export const BarChart3 = createIcon(LBarChart3, huge(Analytics01Icon))
 export const Bold = createIcon(LBold, huge(TextBoldIcon))
 export const Building2 = createIcon(LBuilding2, huge(Building01Icon))
+export const Calculator = createIcon(LCalculator, huge(Calculator01Icon))
 export const CalendarDays = createIcon(LCalendarDays, huge(Calendar03Icon))
+export const Clock = createIcon(LClock, huge(Clock01Icon))
 export const Check = createIcon(LCheck, huge(Tick02Icon))
 export const CheckCircle2 = createIcon(
   LCheckCircle2,
@@ -173,6 +189,7 @@ export const Copy = createIcon(LCopy, huge(Copy01Icon))
 export const Database = createIcon(LDatabase, huge(Database01Icon))
 export const DollarSign = createIcon(LDollarSign, huge(Dollar01Icon))
 export const Download = createIcon(LDownload, huge(Download04Icon))
+export const Flag = createIcon(LFlag, huge(Flag01Icon))
 export const Info = createIcon(LInfo, huge(InformationCircleIcon))
 export const Italic = createIcon(LItalic, huge(TextItalicIcon))
 export const LayoutGrid = createIcon(LLayoutGrid, huge(GridViewIcon))
@@ -188,9 +205,13 @@ export const Pipette = createIcon(LPipette)
 export const Plus = createIcon(LPlus, huge(PlusSignIcon))
 export const Redo2 = createIcon(LRedo2, huge(RedoIcon))
 export const RotateCcw = createIcon(LRotateCcw, huge(RefreshIcon))
+export const Scale = createIcon(LScale, huge(BalanceScaleIcon))
 export const Search = createIcon(LSearch, huge(Search01Icon))
 export const Settings2 = createIcon(LSettings2, huge(Settings02Icon))
+export const Shield = createIcon(LShield, huge(Shield01Icon))
+export const Sparkles = createIcon(LSparkles, huge(AiMagicIcon))
 export const ShoppingBag = createIcon(LShoppingBag, huge(ShoppingBag01Icon))
+export const Store = createIcon(LStore, huge(Store01Icon))
 export const ShoppingCart = createIcon(LShoppingCart, huge(ShoppingCart01Icon))
 export const Sun = createIcon(LSun, huge(Sun03Icon))
 export const Table = createIcon(LTable, huge(Table01Icon))

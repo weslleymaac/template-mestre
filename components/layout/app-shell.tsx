@@ -3,12 +3,10 @@
 import { Settings2 } from '@/components/ui/icons'
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ComponentesView } from '@/components/pages/componentes-view'
-import { CrudView } from '@/components/pages/crud-view'
-import { GraficosView } from '@/components/pages/graficos-view'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 import { PresetPanel } from '@/components/pages/preset-panel'
-import { PageHeader } from '@/components/showcase'
 import { PaletteSwitcher } from '@/components/palette-switcher'
 import { useSidebar } from '@/components/providers/sidebar-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -17,7 +15,7 @@ import { Icon } from '@/components/ui/icon'
 import { PageTransition } from '@/components/ui/page-transition'
 import { useToast } from '@/components/ui/toast'
 import { useClickOutside } from '@/hooks/use-click-outside'
-import { NAV_ITEMS, NAV_SECTIONS, type NavItem } from '@/lib/nav'
+import { NAV_SECTIONS } from '@/lib/nav'
 import type { IconName } from '@/lib/icon-set'
 import type { SidebarMenuEffect } from '@/lib/sidebar'
 import { isSolidSidebarColor } from '@/lib/shell-colors'
@@ -33,8 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
   const [presetOpen, setPresetOpen] = useState(false)
-  // Rota ativa da SPA (menu lateral).
-  const [active, setActive] = useState(NAV_ITEMS[0]?.href ?? '/')
+  const pathname = usePathname()
   const { visibility, style, mode } = useSidebar()
   // "visible" = barra fixa no desktop; "hidden" = sempre atrás do menu sanduíche.
   const sidebarFixed = visibility === 'visible'
@@ -59,6 +56,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     isDesktop && sidebarFixed
       ? sidebarWidth + (floating ? leftGutter * 2 : 0)
       : 0
+
+  if (pathname === '/analise-de-escala' || pathname.startsWith('/analise-de-escala/')) {
+    return <div className="min-h-svh bg-background">{children}</div>
+  }
 
   return (
     <div className="min-h-svh bg-background">
@@ -88,8 +89,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             collapsed={collapsed}
             floating={floating}
             compact={compact}
-            active={active}
-            onNavigate={setActive}
+            active={pathname}
             onToggleCollapse={() => setCollapsed((v) => !v)}
           />
         </motion.aside>
@@ -126,11 +126,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 collapsed={false}
                 floating={floating}
                 compact={false}
-                active={active}
-                onNavigate={(href) => {
-                  setActive(href)
-                  setMobileOpen(false)
-                }}
+                active={pathname}
+                onNavigate={() => setMobileOpen(false)}
                 onClose={() => setMobileOpen(false)}
               />
             </motion.aside>
@@ -174,65 +171,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* overflow-x-clip (não hidden): evita scrollport que quebra position:sticky das tabs */}
         <main className="flex-1 overflow-x-clip">
-          <PageTransition pageKey={active}>
-            {resolveNavScreen(active, children)}
-          </PageTransition>
+          <PageTransition pageKey={pathname}>{children}</PageTransition>
         </main>
       </motion.div>
 
       <PresetPanel open={presetOpen} onClose={() => setPresetOpen(false)} />
     </div>
-  )
-}
-
-function PageContainer({ children }: { children: ReactNode }) {
-  return (
-    <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-      {children}
-    </div>
-  )
-}
-
-function resolveNavScreen(href: string, children: ReactNode) {
-  switch (href) {
-    case '/':
-      return children
-    case '/componentes':
-      return (
-        <PageContainer>
-          <ComponentesView />
-        </PageContainer>
-      )
-    case '/usuarios':
-      return (
-        <PageContainer>
-          <CrudView />
-        </PageContainer>
-      )
-    case '/relatorios':
-      return (
-        <PageContainer>
-          <GraficosView />
-        </PageContainer>
-      )
-    default: {
-      const item = NAV_ITEMS.find((navItem) => navItem.href === href)
-      return <NavPlaceholderView item={item} />
-    }
-  }
-}
-
-function NavPlaceholderView({ item }: { item?: NavItem }) {
-  return (
-    <PageContainer>
-      <PageHeader
-        title={item?.label ?? 'Em breve'}
-        description={
-          item?.description ??
-          'Esta tela faz parte do template de navegação. Personalize conforme o seu produto.'
-        }
-      />
-    </PageContainer>
   )
 }
 
@@ -249,7 +193,7 @@ function SidebarContent({
   floating: boolean
   compact?: boolean
   active: string
-  onNavigate: (href: string) => void
+  onNavigate?: () => void
   onToggleCollapse?: () => void
   onClose?: () => void
 }) {
@@ -291,7 +235,7 @@ function SidebarContent({
         </span>
         {!collapsed && (
           <span className="font-heading text-base font-semibold tracking-tight text-sidebar-foreground">
-            Nova UI
+            Escala 5x2
           </span>
         )}
         {onClose ? (
@@ -360,20 +304,22 @@ function SidebarContent({
                 return (
                   <CollapsedNavButton
                     key={item.href}
+                    href={item.href}
                     label={item.label}
                     icon={item.icon}
                     isActive={isActive}
                     menuEffect={menuEffect}
                     solidSidebar={solidSidebar}
-                    onClick={() => onNavigate(item.href)}
+                    onNavigate={onNavigate}
                   />
                 )
               }
               return (
-                <button
+                <Link
                   key={item.href}
-                  type="button"
-                  onClick={() => onNavigate(item.href)}
+                  href={item.href}
+                  onClick={onNavigate}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                     isActive
@@ -388,7 +334,7 @@ function SidebarContent({
                     className="size-5 shrink-0 transition-transform duration-200 ease-out group-hover:-rotate-12"
                   />
                   <span className="truncate">{item.label}</span>
-                </button>
+                </Link>
               )
             })}
           </div>
@@ -413,7 +359,7 @@ function CompactSidebarContent({
   menuEffect,
 }: {
   active: string
-  onNavigate: (href: string) => void
+  onNavigate?: () => void
   menuEffect: SidebarMenuEffect
 }) {
   const { sidebarColor, customSidebarColor } = useSidebar()
@@ -443,12 +389,13 @@ function CompactSidebarContent({
               return (
                 <CollapsedNavButton
                   key={item.href}
+                  href={item.href}
                   label={item.label}
                   icon={item.icon}
                   isActive={isActive}
                   menuEffect={menuEffect}
                   solidSidebar={solidSidebar}
-                  onClick={() => onNavigate(item.href)}
+                  onNavigate={onNavigate}
                 />
               )
             })}
@@ -641,19 +588,21 @@ function collapsedHoverPill(solidSidebar: boolean) {
 }
 
 function CollapsedNavButton({
+  href,
   label,
   icon,
   isActive,
   menuEffect,
   solidSidebar = false,
-  onClick,
+  onNavigate,
 }: {
+  href: string
   label: string
   icon: IconName
   isActive: boolean
   menuEffect: SidebarMenuEffect
   solidSidebar?: boolean
-  onClick: () => void
+  onNavigate?: () => void
 }) {
   const iconTone = cn(
     solidSidebar
@@ -679,10 +628,11 @@ function CollapsedNavButton({
   if (menuEffect === 'slide') {
     return (
       <div className="group/nav relative w-10 shrink-0 hover:z-50">
-        <button
-          type="button"
-          onClick={onClick}
+        <Link
+          href={href}
+          onClick={onNavigate}
           aria-label={label}
+          aria-current={isActive ? 'page' : undefined}
           className={cn(
             'relative flex h-10 w-10 items-center overflow-hidden rounded-xl border border-transparent transition-[width,box-shadow,background-color,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
             solidSidebar
@@ -700,24 +650,25 @@ function CollapsedNavButton({
         >
           <span className="grid size-10 shrink-0 place-items-center">{iconEl}</span>
           <span className="whitespace-nowrap pr-4 text-sm font-medium">{label}</span>
-        </button>
+        </Link>
       </div>
     )
   }
 
   return (
     <div className="group/nav relative w-10 shrink-0 hover:z-50">
-      <button
-        type="button"
-        onClick={onClick}
+      <Link
+        href={href}
+        onClick={onNavigate}
         aria-label={label}
+        aria-current={isActive ? 'page' : undefined}
         className={cn(
           'flex size-10 items-center justify-center rounded-xl transition-colors duration-200',
           iconTone,
         )}
       >
         {iconEl}
-      </button>
+      </Link>
 
       <div
         aria-hidden
